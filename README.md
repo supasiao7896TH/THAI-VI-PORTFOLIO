@@ -11,7 +11,7 @@
 | หมวดอุตสาหกรรม | หลักทรัพย์ | ไฟล์รายงาน Markdown (`.md`) | ไฟล์รายงาน Interactive / Print (`.html`) | ภาพกราฟอ้างอิง |
 |---|---|---|---|---|
 | **⚡ พลังงาน (Energy)** | **`PTT`** (บมจ. ปตท.) | [PTT_VI_Analysis_2026-10-22.md](./PTT_VI_Analysis_2026-10-22.md) | [PTT_VI_Report.html](./PTT_VI_Report.html) | [PTT001.png](./PTT001.png) (`1M`), [PTT002.png](./PTT002.png) (`1W`) |
-| **🏦 ธนาคาร (Banking)** | **`BBL` vs `KTB`** (กรุงเทพ vs กรุงไทย) | [BANK_BBL_vs_KTB_VI_Analysis_2026-10-22.md](./BANK_BBL_vs_KTB_VI_Analysis_2026-10-22.md) | [BANK_BBL_vs_KTB_VI_Report.html](./BANK_BBL_vs_KTB_VI_Report.html) | [BBL001.png](./BBL001.png) (`1M`), [KTB001.png](./KTB001.png) (`1M`) |
+| **🏦 ธนาคาร (Banking)** | **`BBL` vs `KTB`** (กรุงเทพ vs กรุงไทย) | [BANK_BBL_vs_KTB_VI_Analysis_2026-10-22.md](./BANK_BBL_vs_KTB_VI_Analysis_2026-10-22.md) | [BANK_BBL_vs_KTB_VI_Report.html](./BANK_BBL_vs_KTB_VI_Report.html) | `BBL`: [BBL001.png](./BBL001.png) (`1M`), [BBL002.png](./BBL002.png) (`1W`) · `KTB`: [KTB001.png](./KTB001.png) (`1M`), [KTB002.png](./KTB002.png) (`1W`) |
 
 ---
 
