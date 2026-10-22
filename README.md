@@ -7,13 +7,15 @@
 
 ---
 
-## 🌐 คลิกเปิดดูหน้าเว็บรายงานออนไลน์ (Live Interactive HTML Reports)
+## 🌐 คลิกเปิดใช้งานเว็บแอป PWA ออนไลน์ (Cloudflare Workers Live + PWA)
 
-> **💡 กดลิงก์ด้านล่างเพื่อเปิดดูหน้าเว็บ Dashboard และกราฟแบบสวยงามผ่านเบราว์เซอร์ได้ทันที (ทั้งบน PC และมือถือ):**
-> 1. 🏛️ **[เปิดหน้า Dashboard จำลองพอร์ต 5,000,000 บาท (Interactive Simulator)](https://supasiao7896th.github.io/THAI-VI-PORTFOLIO/reports/00_Master_Portfolio_5M_Blueprint.html)**
-> 2. ⚡ **[เปิดรายงานเว็บกลุ่มพลังงาน: หุ้น PTT](https://supasiao7896th.github.io/THAI-VI-PORTFOLIO/reports/01_Energy_PTT_VI_Report.html)**
-> 3. 🏦 **[เปิดรายงานเว็บกลุ่มธนาคาร: BBL vs KTB](https://supasiao7896th.github.io/THAI-VI-PORTFOLIO/reports/02_Bank_BBL_vs_KTB_VI_Report.html)**
-> 4. 🏥 **[เปิดรายงานเว็บกลุ่มสุขภาพรับสังคมสูงวัย: BDMS vs MEGA](https://supasiao7896th.github.io/THAI-VI-PORTFOLIO/reports/03_Health_BDMS_vs_MEGA_VI_Report.html)**
+> **🚀 ลิงก์หลักบน Cloudflare Workers (ดึงราคาหุ้นตลาดหลักทรัพย์ SET สดตลอดเวลา + ติดตั้งเป็นแอป PWA ลงมือถือ/คอมได้):**
+> - 🏠 **หน้าหลักแอป PWA:** **[https://thai-vi-portfolio.supasiao.workers.dev](https://thai-vi-portfolio.supasiao.workers.dev)**
+> - 🏛️ **[00. หน้า Dashboard จำลองพอร์ต 5,000,000 บาท (Live Simulator)](https://thai-vi-portfolio.supasiao.workers.dev/reports/00_Master_Portfolio_5M_Blueprint.html)**
+> - ⚡ **[01. รายงานกลุ่มพลังงาน: หุ้น PTT (Live Price)](https://thai-vi-portfolio.supasiao.workers.dev/reports/01_Energy_PTT_VI_Report.html)**
+> - 🏦 **[02. รายงานกลุ่มธนาคาร: BBL vs KTB (Live Price)](https://thai-vi-portfolio.supasiao.workers.dev/reports/02_Bank_BBL_vs_KTB_VI_Report.html)**
+> - 🏥 **[03. รายงานกลุ่มสุขภาพรับสังคมสูงวัย: BDMS vs MEGA (Live Price)](https://thai-vi-portfolio.supasiao.workers.dev/reports/03_Health_BDMS_vs_MEGA_VI_Report.html)**
+> - 📡 **API ราคาหุ้นสด (JSON):** [`https://thai-vi-portfolio.supasiao.workers.dev/api/quotes`](https://thai-vi-portfolio.supasiao.workers.dev/api/quotes)
 
 ---
 
