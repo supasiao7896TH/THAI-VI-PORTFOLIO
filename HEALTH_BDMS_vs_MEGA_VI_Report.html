@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthcare VI Analysis: BDMS vs MEGA | Supasit.A Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-page: #F7F9FC;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #EFF4FF;
+      --bg-amber-subtle: #FEF9EC;
+      --bg-success-subtle: #ECFDF5;
+      --bg-warning-subtle: #FFFBEB;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #475569;
+      --brand-ink: #1D4ED8;
+      --brand-ink-hover: #1E40AF;
+      --ref-amber: #8A6410;
+      --status-success: #15803D;
+      --status-warning: #B45309;
+      --status-danger: #B91C1C;
+      --border-line: #E2E8F0;
+      --card-radius: 13px;
+      --btn-radius: 999px;
+      --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans Thai', sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.65;
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 20px 64px;
+    }
+
+    /* Header Bar */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-line);
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ref-amber);
+      background-color: var(--bg-amber-subtle);
+      border: 1px solid #FDE68A;
+      padding: 6px 14px;
+      border-radius: var(--btn-radius);
+    }
+
+    .action-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 20px;
+      border-radius: var(--btn-radius);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid var(--brand-ink);
+      background-color: var(--brand-ink);
+      color: #FFFFFF;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-pill:hover {
+      background-color: var(--brand-ink-hover);
+    }
+
+    .btn-pill.secondary {
+      background-color: var(--bg-surface);
+      color: var(--brand-ink);
+      border: 1px solid var(--brand-ink);
+    }
+
+    .btn-pill.secondary:hover {
+      background-color: var(--bg-subtle);
+    }
+
+    .btn-pill:focus-visible {
+      outline: 3px solid var(--brand-ink);
+      outline-offset: 2px;
+    }
+
+    /* Cards (ST-02 & ST-03: 13px radius, 1px border + single subtle shadow) */
+    .card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-line);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-card);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-box {
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-line);
+      border-radius: var(--card-radius);
+      padding: 16px;
+    }
+
+    .kpi-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .kpi-sub {
+      font-size: 13px;
+      color: var(--ref-amber);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: var(--btn-radius);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background-color: var(--bg-success-subtle);
+      color: var(--status-success);
+      border: 1px solid #A7F3D0;
+    }
+
+    .badge-warning {
+      background-color: var(--bg-warning-subtle);
+      color: var(--status-warning);
+      border: 1px solid #FDE68A;
+    }
+
+    .badge-amber {
+      background-color: var(--bg-amber-subtle);
+      color: var(--ref-amber);
+      border: 1px solid #FDE68A;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-line);
+      vertical-align: top;
+    }
+
+    th {
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    tr:hover td {
+      background-color: #FAFCFF;
+    }
+
+    .chart-card {
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-line);
+      border-radius: var(--card-radius);
+      padding: 14px;
+    }
+
+    .chart-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-line);
+      display: block;
+      margin-top: 8px;
+    }
+
+    .chart-caption {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    ul.clean-list {
+      padding-left: 20px;
+      color: var(--text-secondary);
+    }
+
+    ul.clean-list li {
+      margin-bottom: 8px;
+    }
+
+    @media print {
+      body {
+        background-color: #FFFFFF;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div>
+        <span class="brand-tag">A-Class WebCraft | Code • Share • Inspire | by Supasit.A</span>
+      </div>
+      <div class="action-group no-print">
+        <a href="./PTT_VI_Report.html" class="btn-pill secondary" aria-label="เปิดรายงาน PTT">⚡ รายงาน PTT</a>
+        <a href="./BANK_BBL_vs_KTB_VI_Report.html" class="btn-pill secondary" aria-label="เปิดรายงาน BBL vs KTB">🏦 รายงาน BBL vs KTB</a>
+        <button type="button" class="btn-pill" onclick="window.print()" aria-label="พิมพ์รายงานหรือบันทึกเป็น PDF">🖨️ พิมพ์รายงาน / บันทึก PDF</button>
+      </div>
+    </header>
+
+    <!-- Hero Summary Card -->
+    <section class="card">
+      <h1 class="hero-title">🏥 รายงานวิเคราะห์หุ้นสายสุขภาพรับสังคมสูงวัย: BDMS vs MEGA</h1>
+      <p class="hero-subtitle">
+        วิเคราะห์ปัจจัยพื้นฐานจากแบบ 56-1 One Report ประจำปี 2568 ครบทุกมิติ + ประเมินมูลค่า 4 วิธี + แผนสะสม 3 ไม้จากกราฟจริง (ณ วันที่ 22 ตุลาคม 2569)
+      </p>
+
+      <div class="grid-2">
+        <!-- BDMS Highlight Card -->
+        <div class="kpi-box" style="border-left: 4px solid #15803D;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:18px; font-weight:700;">🏥 BDMS (บมจ.กรุงเทพดุสิตเวชการ)</span>
+            <span class="badge badge-success">🏆 28 / 30 (Strong Buy)</span>
+          </div>
+          <div class="kpi-value">ราคาปัจจุบัน: 19.50 บาท</div>
+          <div class="kpi-sub">Operating Fair Value: 24.13 บาท (MoS +19.19% | Upside +23.7%)</div>
+          <p style="font-size:14px; color:var(--text-secondary); margin-top:10px;">
+            • <strong>P/E 19.50x</strong> (ถูกที่สุดในรอบกว่า 10 ปี จากค่าเฉลี่ยในอดีต 28–35x)<br/>
+            • <strong>ปันผลปี 2568:</strong> ปกติ <strong>0.75 บาท (3.85%)</strong> + พิเศษ 0.25 บาท = <strong>1.00 บาท (5.13%)</strong><br/>
+            • <strong>สัญญาณเทคนิค 1M:</strong> ปรับฐาน -43.9% ลงมาแตะแนวรับ 10 ปี (17.40–19.50 บาท) และ <strong>Monthly RSI (42.18) ม้วนตัด SMA (38.32) ขึ้นแล้ว!</strong>
+          </p>
+        </div>
+
+        <!-- MEGA Highlight Card -->
+        <div class="kpi-box" style="border-left: 4px solid #8A6410;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:18px; font-weight:700;">💊 MEGA (บมจ.เมก้า ไลฟ์ไซแอ็นซ์)</span>
+            <span class="badge badge-warning">🥈 26 / 30 (Wait for Pullback)</span>
+          </div>
+          <div class="kpi-value">ราคาปัจจุบัน: 33.75 บาท</div>
+          <div class="kpi-sub">Operating Fair Value: 34.20 บาท (MoS +1.32% | Base Case 31.66 บาท)</div>
+          <p style="font-size:14px; color:var(--text-secondary); margin-top:10px;">
+            • <strong>P/E 15.41x</strong> | <strong>ROE 19.0%</strong> | งบดุลไร้หนี้ <strong>Net Cash +4,156 ล้านบาท</strong><br/>
+            • <strong>ปันผลปี 2568:</strong> <strong>1.60 บาท/หุ้น (Gross Yield 4.74%</strong>, จ่าย 1.60 บาทต่อเนื่อง 4 ปีซ้อน)<br/>
+            • <strong>สัญญาณเทคนิค 1W:</strong> ดีดจากก้นหลุม 24.30 บาท ขึ้นมาชน Double Top ที่ 40.00 บาท แล้วกำลังพักฐาน — <strong>แนะนำรอตั้งรับที่ 29.50–31.50 บาท และ 26.50–28.50 บาท</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Financial Comparison Table -->
+    <section class="card">
+      <div class="section-title">
+        <span>📊 1. เปรียบเทียบงบการเงินและอัตราส่วนสำคัญปี 2568 (ข้อมูลจริงจาก 56-1 One Report)</span>
+        <span class="badge badge-amber">งบการเงินประจำปี 2568 (Actuals)</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ตัวชี้วัดทางการเงิน (Financial Metrics)</th>
+              <th>🏥 BDMS (ปี 2568)</th>
+              <th>💊 MEGA (ปี 2568)</th>
+              <th>ข้อสังเกตเชิงลึกสำหรับนักลงทุน VI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>โครงสร้างรายได้หลัก</strong></td>
+              <td><strong>113,206 ล้านบาท (+3.5% YoY)</strong><br/>รพ. 59 แห่ง (ไทย 72% : ต่างชาติ 28%, IPD 51% : OPD 49%, ประกันสุขภาพ 38%)</td>
+              <td><strong>14,147 ล้านบาท (-7.8% YoY)</strong><br/>แบรนด์ <code>Mega We Care</code> 8,728 MB (<strong>+4.3% YoY</strong>) | จัดจำหน่าย <code>Maxxcare</code> 5,107 MB (-23.4%)</td>
+              <td><code>BDMS</code> รายได้โตสม่ำเสมอทุกกลุ่ม; <code>MEGA</code> ธุรกิจวิตามินหลักโต +4.3% และทำกำไรขั้นต้นถึง 76.4% ของทั้งบริษัท</td>
+            </tr>
+            <tr>
+              <td><strong>อัตรากำไรขั้นต้น (Gross Margin)</strong></td>
+              <td><strong>37.1%</strong> (42,044 ล้านบาท)</td>
+              <td><strong>52.2%</strong> (เฉพาะแบรนด์ <code>Mega We Care</code> สูงถึง <strong>64.6%</strong>!)</td>
+              <td><code>MEGA</code> มี Gross Margin สูงสุดเป็นประวัติการณ์จากสัดส่วนแบรนด์วิตามินที่เพิ่มขึ้น</td>
+            </tr>
+            <tr>
+              <td><strong>EBITDA / EBITDA Margin</strong></td>
+              <td><strong>27,010 ล้านบาท (23.9%)</strong><br/>(Normalized EBITDA 27,426 MB +4% YoY)</td>
+              <td><strong>2,743 ล้านบาท (19.4%)</strong> (+2.6% YoY)</td>
+              <td><code>BDMS</code> มี Economy of Scale ของเครือข่ายโรงพยาบาลที่แข็งแกร่งมาก</td>
+            </tr>
+            <tr>
+              <td><strong>กำไรสุทธิ (Net Profit) & Margin</strong></td>
+              <td><strong>15,848 ล้านบาท (Margin 14.0%)</strong><br/>กำไรปกติ <strong>16,187 ล้านบาท (+2.0% YoY, Margin 14.3%)</strong></td>
+              <td><strong>1,912 ล้านบาท (Margin 13.5%)</strong><br/>กำไรปรับปรุง <strong>2,037 ล้านบาท (Margin 14.4%)</strong></td>
+              <td>ทั้งสองบริษัททำ <strong>Net Profit Margin ~14%</strong> ได้อย่างยอดเยี่ยม (เกณฑ์ VI &gt; 10%)</td>
+            </tr>
+            <tr>
+              <td><strong>EPS / BVPS (ปี 2568)</strong></td>
+              <td><strong>EPS = 1.00 บาท</strong> (ปกติ 1.02) | <strong>BVPS = 6.66 บาท</strong></td>
+              <td><strong>EPS = 2.19 บาท</strong> (ปรับปรุง 2.34) | <strong>BVPS = 11.72 บาท</strong></td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td><strong>ROE / ROA</strong></td>
+              <td><strong>ROE = 15.4%</strong> | ROA = 10.2%</td>
+              <td><strong>ROE = 19.0%</strong> | ROA = 12.8% (ROFA = 97.4%)</td>
+              <td>ผ่านเกณฑ์ <code>ROE &gt; 12%</code> อย่างงดงามทั้งคู่</td>
+            </tr>
+            <tr>
+              <td><strong>หนี้สินและสภาพคล่อง (IBD/E)</strong></td>
+              <td><strong>IBD/E = 0.20x</strong> (Net IBD/E = 0.10x, Interest Coverage = <strong>75.8x</strong>)</td>
+              <td><strong>IBD/E = 0.05x</strong> | เงินสด 4,629 MB vs หนี้ 472 MB (<strong>Net Cash = +4,156 ล้านบาท / 4.77 บาทต่อหุ้น!</strong>)</td>
+              <td>งบดุลระดับป้อมปราการทั้งคู่ ไม่มีภาระดอกเบี้ยกดดันแม้ในภาวะเศรษฐกิจผันผวน</td>
+            </tr>
+            <tr>
+              <td><strong>กระแสเงินสด (OCF & Free Cash Flow)</strong></td>
+              <td>OCF = 23,355 MB | CAPEX = 10,416 MB<br/><strong>FCF = +12,939 ล้านบาท (0.814 บาท/หุ้น)</strong></td>
+              <td>OCF = 2,770.4 MB | CAPEX = 667.0 MB<br/><strong>FCF = +2,103.4 ล้านบาท (2.41 บาท/หุ้น)</strong></td>
+              <td>กระแสเงินสดจากการดำเนินงานสูงกว่ากำไรสุทธิ ~145% ทั้งสองบริษัท</td>
+            </tr>
+            <tr>
+              <td><strong>ปันผล 5 ปีย้อนหลัง (2564–2568)</strong></td>
+              <td><code>0.45 → 0.60 → 0.70 → 0.75 → 1.00 บาท</code><br/>(ปี 2568: ปกติ <strong>0.75</strong> + พิเศษ <strong>0.25</strong>)</td>
+              <td><code>1.38 → 1.60 → 1.60 → 1.60 → 1.60 บาท</code><br/>(Payout 73.0% ของกำไร / 66.3% ของ FCF)</td>
+              <td>จ่ายปันผลต่อเนื่องและมั่นคงจากเงินสดจริงทั้งคู่</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4-Method Valuation & VI Scorecard -->
+    <section class="card">
+      <div class="section-title">
+        <span>🧮 2. การประเมินมูลค่าที่แท้จริง 4 วิธี (4-Method Valuation) & Final VI Scorecard (/30)</span>
+        <span class="badge badge-success">เปรียบเทียบ ณ ราคาปิด 22 ต.ค. 2569</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>วิธีการประเมินมูลค่า / เกณฑ์คะแนน</th>
+              <th>🏥 BDMS (ราคาปัจจุบัน <code>19.50 บาท</code>)</th>
+              <th>💊 MEGA (ราคาปัจจุบัน <code>33.75 บาท</code>)</th>
+              <th>คำวินิจฉัยเปรียบเทียบ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>วิธีที่ 1: Discounted Cash Flow (DCF)</strong></td>
+              <td><strong>24.70 บาท</strong> (<code>+26.7%</code>)</td>
+              <td><strong>39.80 บาท</strong> (<code>+17.9%</code> รวม Net Cash 4.77 บาท/หุ้น)</td>
+              <td>สะท้อนศักยภาพการสร้าง Free Cash Flow ระยะยาว</td>
+            </tr>
+            <tr>
+              <td><strong>วิธีที่ 2: P/E Relative Valuation</strong></td>
+              <td><strong>24.00 บาท</strong> (Fair P/E 24.0x × EPS 1.00)</td>
+              <td><strong>32.85 บาท</strong> (Fair P/E 15.0x × EPS 2.19)</td>
+              <td><code>BDMS</code> ปัจจุบันเทรด P/E 19.5x ต่ำกว่า Fair P/E 24x ชัดเจน</td>
+            </tr>
+            <tr>
+              <td><strong>วิธีที่ 3: Graham Number</strong></td>
+              <td><strong>12.24 บาท</strong> ($\sqrt{22.5 \times 1.00 \times 6.66}$)</td>
+              <td><strong>24.03 บาท</strong> ($\sqrt{22.5 \times 2.19 \times 11.72}$)</td>
+              <td><code>MEGA</code> เคยลงไปแตะ 24.30 บาท (ตรงกับ Graham Number พอดีในปี 2025!)</td>
+            </tr>
+            <tr>
+              <td><strong>วิธีที่ 4: Dividend Discount Model (DDM)</strong></td>
+              <td><strong>23.68 บาท</strong> (คิดจากปันผลปกติ 0.75 บาท, g=4.2%, r=7.5%)</td>
+              <td><strong>29.96 บาท</strong> (คิดจาก DPS 1.60 บาท, g=3.0%, r=8.5%)</td>
+              <td><code>BDMS</code> มี Upside จาก DDM +21.4%</td>
+            </tr>
+            <tr style="background-color: var(--bg-subtle);">
+              <td><strong>🌟 Operating Fair Value (เฉลี่ย DCF+PE+DDM)</strong></td>
+              <td><strong>24.13 บาท (MoS +19.19% | Upside +23.7%)</strong></td>
+              <td><strong>34.20 บาท (MoS +1.32% | Upside +1.3%)</strong></td>
+              <td><strong>🏆 BDMS มี Margin of Safety สูงถึงเกือบ 20% ณ ราคาปัจจุบัน</strong></td>
+            </tr>
+            <tr>
+              <td><strong>🌟 Base Case Fair Value (เฉลี่ยครบ 4 วิธี)</strong></td>
+              <td><strong>21.16 บาท (MoS +7.84%)</strong></td>
+              <td><strong>31.66 บาท (MoS -6.60%)</strong></td>
+              <td><code>BDMS</code> ต่ำกว่าค่าเฉลี่ยทั้ง 4 วิธี ส่วน <code>MEGA</code> สูงกว่า Base Case เล็กน้อย</td>
+            </tr>
+            <tr>
+              <td><strong>🎯 Target Buy Zone (โซนสะสมหลัก)</strong></td>
+              <td><strong>18.10 – 20.50 บาท (อยู่ในโซนซื้อทันที!)</strong></td>
+              <td><strong>26.50 – 31.50 บาท (รอตั้งรับเมื่อย่อตัว)</strong></td>
+              <td>—</td>
+            </tr>
+            <tr style="background-color: var(--bg-amber-subtle);">
+              <td><strong>🏆 คะแนนรวม Final VI Scorecard (เต็ม 30)</strong></td>
+              <td><strong>28 / 30 คะแนน</strong><br/>(A: 10/10 | B: 10/10 | C: 5/6 | D: 3/4)</td>
+              <td><strong>26 / 30 คะแนน</strong><br/>(A: 9/10 | B: 9/10 | C: 6/6 | D: 2/4)</td>
+              <td><strong>สะสม <code>BDMS</code> เข้าพอร์ตทันที + เฝ้ารอรับ <code>MEGA</code> เมื่อพักฐาน</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- BDMS Entry Timing Section -->
+    <section class="card">
+      <div class="section-title">
+        <span>📈 3. Entry Timing: BDMS (บมจ.กรุงเทพดุสิตเวชการ — ราคาปัจจุบัน 19.50 บาท)</span>
+        <span class="badge badge-success">🟢 อยู่ในโซนซื้อ (In Buy Zone 18.10–20.50 บาท)</span>
+      </div>
+
+      <div class="grid-2" style="margin-bottom: 18px;">
+        <div class="chart-card">
+          <div class="chart-caption">📌 กราฟ BDMS Timeframe 1M (BDMS001.png) — ฐานแนวรับ 10 ปี & Monthly RSI (42.18) ตัด SMA (38.32) ขึ้น!</div>
+          <img src="./BDMS001.png" alt="กราฟเทคนิค BDMS รายเดือน TF 1M" />
+        </div>
+        <div class="chart-card">
+          <div class="chart-caption">📌 กราฟ BDMS Timeframe 1W (BDMS002.png) — ฐานสะสม Double Bottom (17.40–20.50 บาท)</div>
+          <img src="./BDMS002.png" alt="กราฟเทคนิค BDMS รายสัปดาห์ TF 1W" />
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ไม้ที่ (Tranche)</th>
+              <th>สัดส่วนเงินทุน</th>
+              <th>โซนราคาเข้าซื้อ (บาท)</th>
+              <th>เงื่อนไขทางเทคนิคและ Valuation ที่ต้องเห็นก่อนกดซื้อ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ไม้ 1 (สะสมทันที)</strong></td>
+              <td><strong>30%</strong></td>
+              <td><strong>19.00 – 19.50 บาท</strong></td>
+              <td>ราคาปรับฐานลงมาจากยอด 32.00 บาท ถึง -43.9% จน P/E เหลือ 19.5x และ <code>Monthly RSI (42.18)</code> ตัดเหนือ <code>SMA (38.32)</code> เป็นสัญญาณกลับตัวระดับทศวรรษ</td>
+            </tr>
+            <tr>
+              <td><strong>ไม้ 2 (ตั้งรับแนวรับ)</strong></td>
+              <td><strong>40%</strong></td>
+              <td><strong>17.50 – 18.75 บาท</strong></td>
+              <td>ตั้งรับเมื่อราคาย่อตัวลงมาแตะ <code>18.75 บาท</code> (จุดที่ปันผลปกติ 0.75 บาท ให้ <strong>Gross Yield ครบ 4.00% พอดี</strong>) ถึงฐาน Double Bottom เดิมที่ <code>17.40–18.00 บาท</code></td>
+            </tr>
+            <tr>
+              <td><strong>ไม้ 3 (ยืนยันขาขึ้น)</strong></td>
+              <td><strong>30%</strong></td>
+              <td><strong>ทะลุ 20.60 บาท</strong> (หรือรับลึก 16.50–17.40)</td>
+              <td>ซื้อไม้ยืนยันเมื่อแท่งเทียน <code>1W</code> ปิดทะลุแนวต้านกรอบสะสม <code>20.50 บาท</code> พร้อม Volume สูงกว่าค่าเฉลี่ย เพื่อถือรันเทรนด์สู่ Fair Value <code>24.13 บาท</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MEGA Entry Timing Section -->
+    <section class="card">
+      <div class="section-title">
+        <span>📈 4. Entry Timing: MEGA (บมจ.เมก้า ไลฟ์ไซแอ็นซ์ — ราคาปัจจุบัน 33.75 บาท)</span>
+        <span class="badge badge-warning">🟡 รอย่อตัวเพื่อเอา Margin of Safety (Target 26.50–31.50 บาท)</span>
+      </div>
+
+      <div class="grid-2" style="margin-bottom: 18px;">
+        <div class="chart-card">
+          <div class="chart-caption">📌 กราฟ MEGA Timeframe 1M (MEGA001.png) — ฟื้นตัวจากฐาน 24.30 บาท (Graham Number) ขึ้นมาพักตัวที่ 33.75 บาท</div>
+          <img src="./MEGA001.png" alt="กราฟเทคนิค MEGA รายเดือน TF 1M" />
+        </div>
+        <div class="chart-card">
+          <div class="chart-caption">📌 กราฟ MEGA Timeframe 1W (MEGA002.png) — ติดแนวต้าน Double Top (39.50–40.00 บาท) และกำลังปรับฐาน</div>
+          <img src="./MEGA002.png" alt="กราฟเทคนิค MEGA รายสัปดาห์ TF 1W" />
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ไม้ที่ (Tranche)</th>
+              <th>สัดส่วนเงินทุน</th>
+              <th>โซนราคาเข้าซื้อ (บาท)</th>
+              <th>เงื่อนไขทางเทคนิคและ Valuation ที่ต้องเห็นก่อนกดซื้อ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ไม้ 1 (รอรับแนวรับแรก)</strong></td>
+              <td><strong>30%</strong></td>
+              <td><strong>29.50 – 31.50 บาท</strong></td>
+              <td>รอราคาย่อตัวลงมาต่ำกว่า <code>Base Case Fair Value (31.66 บาท)</code> และใกล้ <code>DDM (29.96 บาท)</code> ซึ่งจะได้ <strong>Gross Yield 5.08% – 5.42%</strong> พร้อมแท่งเทียนกลับตัวบน 1W</td>
+            </tr>
+            <tr>
+              <td><strong>ไม้ 2 (โซนสะสมหลัก)</strong></td>
+              <td><strong>40%</strong></td>
+              <td><strong>26.50 – 28.50 บาท</strong></td>
+              <td>โซน <code>Target Buy Zone</code> หลัก (MoS 17%–22% เทียบ Operating FV, <strong>Gross Yield 5.61% – 6.04%</strong>) และ <code>RSI 1W</code> ลงมาแตะโซน Oversold 30–35</td>
+            </tr>
+            <tr>
+              <td><strong>ไม้ 3 (โซน Graham Floor)</strong></td>
+              <td><strong>30%</strong></td>
+              <td><strong>24.00 – 26.00 บาท</strong></td>
+              <td>โซน <code>Graham Number (24.03 บาท)</code> และจุดต่ำสุดเดิมปี 2025 (<code>24.30 บาท</code>) หากเกิด Panic Sell ในตลาด</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
