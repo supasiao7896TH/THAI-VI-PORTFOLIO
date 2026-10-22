@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thai-vi-portfolio-v1.2.0';
+const CACHE_NAME = 'thai-vi-portfolio-v1.3.0';
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -34,10 +34,16 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Network-First strategy: Always fetch latest online version when connected, fallback to cache if offline
+// Network-First strategy for static pages; NEVER cache /api/* endpoints
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
+
+  const url = new URL(req.url);
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(fetch(req, { cache: 'no-store' }));
+    return;
+  }
 
   event.respondWith(
     fetch(req)

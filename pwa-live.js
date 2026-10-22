@@ -1,59 +1,65 @@
 (function () {
+  const WORKER_API_BASE = 'https://thai-vi-portfolio.supasiao.workers.dev';
+
   const BASELINE_QUOTES = {
     PTT: {
       code: 'PTT',
       name: 'บมจ.ปตท.',
-      price: 33.25,
-      change: 0,
-      changePct: 0,
-      fairValue: 40.66,
-      totalDps: 2.10,
-      normalDps: 1.90,
+      price: 41.50,
+      prevClose: 40.75,
+      change: 0.75,
+      changePct: 1.84,
+      fairValue: 41.48,
+      totalDps: 2.30,
+      normalDps: 2.10,
       eps: 3.15,
       bvps: 39.96,
-      t1Max: 32.50,
-      t2Max: 30.50,
-      t3Max: 28.50,
-      floorPrice: 27.00
+      t1Max: 38.00,
+      t2Max: 35.00,
+      t3Max: 32.50,
+      floorPrice: 30.50
     },
     BBL: {
       code: 'BBL',
       name: 'ธ.กรุงเทพ',
-      price: 161.50,
-      change: 0,
-      changePct: 0,
-      fairValue: 214.08,
+      price: 183.50,
+      prevClose: 181.00,
+      change: 2.50,
+      changePct: 1.38,
+      fairValue: 237.59,
       totalDps: 10.00,
       normalDps: 10.00,
-      eps: 24.11,
-      bvps: 303.40,
-      t1Max: 162.00,
-      t2Max: 155.00,
-      t3Max: 145.00,
+      eps: 24.10,
+      bvps: 300.67,
+      t1Max: 180.50,
+      t2Max: 165.00,
+      t3Max: 148.00,
       floorPrice: 138.00
     },
     KTB: {
       code: 'KTB',
       name: 'ธ.กรุงไทย',
-      price: 34.25,
+      price: 43.25,
+      prevClose: 43.25,
       change: 0,
       changePct: 0,
-      fairValue: 34.33,
-      totalDps: 2.07,
-      normalDps: 1.47,
+      fairValue: 35.72,
+      totalDps: 2.67,
+      normalDps: 2.07,
       eps: 3.45,
-      bvps: 32.72,
-      t1Max: 31.00,
-      t2Max: 28.50,
-      t3Max: 26.00,
-      floorPrice: 24.50
+      bvps: 33.20,
+      t1Max: 35.50,
+      t2Max: 31.00,
+      t3Max: 27.50,
+      floorPrice: 25.00
     },
     BDMS: {
       code: 'BDMS',
       name: 'กรุงเทพดุสิตเวชการ',
-      price: 19.50,
-      change: 0,
-      changePct: 0,
+      price: 19.40,
+      prevClose: 19.50,
+      change: -0.10,
+      changePct: -0.51,
       fairValue: 24.13,
       totalDps: 1.00,
       normalDps: 0.75,
@@ -67,9 +73,10 @@
     MEGA: {
       code: 'MEGA',
       name: 'เมก้า ไลฟ์ไซแอ็นซ์',
-      price: 33.75,
-      change: 0,
-      changePct: 0,
+      price: 34.50,
+      prevClose: 33.50,
+      change: 1.00,
+      changePct: 2.99,
       fairValue: 34.20,
       totalDps: 1.60,
       normalDps: 1.60,
@@ -140,10 +147,12 @@
 
   window.evaluateViActionSignal = evaluateActionSignal;
 
-  // Register Service Worker for PWA
+  // Register Service Worker for PWA and force update check
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
+      navigator.serviceWorker.register('/sw.js').then((reg) => {
+        reg.update().catch(() => {});
+      }).catch(() => {});
     });
   }
 
@@ -186,6 +195,7 @@
     actionsRight.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap;';
 
     const refreshBtn = document.createElement('button');
+    refreshBtn.id = 'viRefreshLiveBtn';
     refreshBtn.type = 'button';
     refreshBtn.className = 'btn-pill secondary';
     refreshBtn.setAttribute('aria-label', 'อัปเดตราคาหุ้นล่าสุด');
@@ -247,14 +257,20 @@
         badge.style.background = '#FEF9EC';
         badge.style.color = '#8A6410';
         badge.style.borderColor = '#FDE68A';
-        badge.textContent = '📌 โหมดออฟไลน์: ราคาอ้างอิงฐาน 56-1';
+        badge.textContent = '📌 โหมดออฟไลน์: ราคาปิดตลาดอ้างอิงล่าสุด';
       }
     }
 
     if (timeLabel && updatedAtStr) {
       try {
         const dt = new Date(updatedAtStr);
-        timeLabel.textContent = 'อัปเดตล่าสุด: ' + dt.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const anyMarketTime = quotesMap?.PTT?.marketTime ? new Date(quotesMap.PTT.marketTime) : null;
+        const marketTimeStr = anyMarketTime
+          ? anyMarketTime.toLocaleString('th-TH', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+          : '';
+        timeLabel.textContent =
+          (marketTimeStr ? 'ข้อมูลตลาด SET ณ ' + marketTimeStr + ' น. | ' : '') +
+          'เช็คล่าสุด: ' + dt.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       } catch (_e) {
         timeLabel.textContent = '';
       }
@@ -264,7 +280,7 @@
       const base = BASELINE_QUOTES[code];
       const q = quotesMap[code] || base;
       const price = Number(q.price) || base.price;
-      const changePct = Number(q.changePct) || 0;
+      const changePct = (typeof q.changePct === 'number') ? q.changePct : base.changePct;
       const grossYield = ((base.totalDps / price) * 100).toFixed(2);
       const pe = (price / base.eps).toFixed(1);
       const pbv = (price / base.bvps).toFixed(2);
@@ -296,7 +312,7 @@
       const priceSpan = document.createElement('span');
       priceSpan.style.cssText = 'font-size:15.5px;font-weight:700;color:#1D4ED8;';
       const sign = changePct > 0 ? '+' : '';
-      priceSpan.textContent = price.toFixed(2) + ' บ.' + (changePct !== 0 ? ' (' + sign + changePct.toFixed(2) + '%)' : '');
+      priceSpan.textContent = price.toFixed(2) + ' บ.' + (changePct !== 0 ? ' (' + sign + changePct.toFixed(2) + '%)' : ' (0.00%)');
 
       row1.appendChild(sym);
       row1.appendChild(priceSpan);
@@ -324,7 +340,7 @@
       gaugeTrack.style.cssText = 'position:relative;height:7px;background:#E2E8F0;border-radius:999px;overflow:hidden;';
 
       const minScale = base.floorPrice * 0.95;
-      const maxScale = base.fairValue * 1.15;
+      const maxScale = Math.max(base.fairValue, price) * 1.12;
       const buyZonePct = Math.max(0, Math.min(100, ((base.t1Max - minScale) / (maxScale - minScale)) * 100));
       const fvPct = Math.max(0, Math.min(100, ((base.fairValue - minScale) / (maxScale - minScale)) * 100));
       const curPct = Math.max(3, Math.min(97, ((price - minScale) / (maxScale - minScale)) * 100));
@@ -344,9 +360,9 @@
       const gaugeLabels = document.createElement('div');
       gaugeLabels.style.cssText = 'display:flex;justify-content:space-between;font-size:10.5px;color:#475569;margin-top:2px;';
       const lblBuy = document.createElement('span');
-      lblBuy.textContent = 'ไม้1 ≤' + base.t1Max.toFixed(1);
+      lblBuy.textContent = 'ไม้1 ≤' + base.t1Max.toFixed(2);
       const lblFv = document.createElement('span');
-      lblFv.textContent = 'FV ' + base.fairValue.toFixed(1);
+      lblFv.textContent = 'FV ' + base.fairValue.toFixed(2);
       gaugeLabels.appendChild(lblBuy);
       gaugeLabels.appendChild(lblFv);
 
@@ -379,7 +395,7 @@
         if (targetStock) {
           targetStock.currentPrice = price;
           targetStock.statusText = signal.label;
-          targetStock.statusClass = signal.tier.startsWith('buy') ? 'badge-success' : 'badge-warning';
+          targetStock.statusClass = signal.tier.startsWith('buy') ? 'badge-success' : (signal.tier === 'wait' ? 'badge-warning' : 'badge-danger');
         }
       }
     });
@@ -395,20 +411,63 @@
     }
   }
 
-  async function fetchAndRenderQuotes() {
+  async function tryFetchQuotesEndpoint(baseUrl, forceRefresh) {
+    const qs = forceRefresh ? `?refresh=1&t=${Date.now()}` : `?t=${Date.now()}`;
+    const res = await fetch(`${baseUrl}/api/quotes${qs}`, {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+
+  async function fetchAndRenderQuotes(isManualRefresh) {
+    const btn = document.getElementById('viRefreshLiveBtn');
+    const badge = document.getElementById('viLiveStatusBadge');
+    if (isManualRefresh && btn) {
+      btn.textContent = '⏳ กำลังดึงราคาสด...';
+      btn.disabled = true;
+      if (badge) {
+        badge.textContent = '⏳ กำลังดึงราคาตลาดล่าสุดจาก SET...';
+      }
+    }
+
     try {
-      const res = await fetch('/api/quotes', { cache: 'no-store' });
-      if (!res.ok) throw new Error('API not available');
-      const data = await res.json();
+      let data = null;
+      if (location.protocol === 'https:' || location.protocol === 'http:') {
+        try {
+          data = await tryFetchQuotesEndpoint('', Boolean(isManualRefresh));
+        } catch (_localErr) {
+          data = await tryFetchQuotesEndpoint(WORKER_API_BASE, Boolean(isManualRefresh));
+        }
+      } else {
+        data = await tryFetchQuotesEndpoint(WORKER_API_BASE, Boolean(isManualRefresh));
+      }
+
       if (data && data.ok && data.quotes) {
         const anyLive = Object.values(data.quotes).some((q) => q.source === 'live-yahoo');
         renderTickerCards(data.quotes, anyLive, data.updatedAt);
+        if (isManualRefresh && btn) {
+          btn.textContent = '✅ อัปเดตราคาสดแล้ว!';
+          btn.disabled = false;
+          setTimeout(() => {
+            if (btn) btn.textContent = '🔄 อัปเดตราคาสด';
+          }, 2200);
+        }
         return;
       }
     } catch (_err) {
-      // Offline or local file:// fallback
+      // Offline fallback
     }
+
     renderTickerCards(BASELINE_QUOTES, false, new Date().toISOString());
+    if (isManualRefresh && btn) {
+      btn.textContent = '📌 ใช้ราคาปิดล่าสุด (ออฟไลน์)';
+      btn.disabled = false;
+      setTimeout(() => {
+        if (btn) btn.textContent = '🔄 อัปเดตราคาสด';
+      }, 2200);
+    }
   }
 
   window.addEventListener('beforeinstallprompt', (e) => {
@@ -422,10 +481,10 @@
 
   function initLiveQuotes() {
     createLiveBar();
-    fetchAndRenderQuotes();
+    fetchAndRenderQuotes(false);
     setInterval(() => {
       if (document.visibilityState === 'visible') {
-        fetchAndRenderQuotes();
+        fetchAndRenderQuotes(false);
       }
     }, REFRESH_INTERVAL_MS);
   }

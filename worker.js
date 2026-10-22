@@ -1,15 +1,15 @@
 const SYMBOLS = [
-  { code: 'PTT',  yahoo: 'PTT.BK',  baselinePrice: 33.25, fairValue: 40.66, totalDps: 2.10, normalDps: 1.90, eps: 3.15,  bvps: 39.96 },
-  { code: 'BBL',  yahoo: 'BBL.BK',  baselinePrice: 161.50, fairValue: 214.08, totalDps: 10.00, normalDps: 10.00, eps: 24.11, bvps: 303.40 },
-  { code: 'KTB',  yahoo: 'KTB.BK',  baselinePrice: 34.25, fairValue: 34.33, totalDps: 2.07, normalDps: 1.47, eps: 3.45,  bvps: 32.72 },
-  { code: 'BDMS', yahoo: 'BDMS.BK', baselinePrice: 19.50, fairValue: 24.13, totalDps: 1.00, normalDps: 0.75, eps: 1.00,  bvps: 6.66 },
-  { code: 'MEGA', yahoo: 'MEGA.BK', baselinePrice: 33.75, fairValue: 34.20, totalDps: 1.60, normalDps: 1.60, eps: 2.19,  bvps: 11.72 }
+  { code: 'PTT',  yahoo: 'PTT.BK',  baselinePrice: 41.50,  fairValue: 41.48,  totalDps: 2.30, normalDps: 2.10, eps: 3.15,  bvps: 39.96 },
+  { code: 'BBL',  yahoo: 'BBL.BK',  baselinePrice: 183.50, fairValue: 237.59, totalDps: 10.00, normalDps: 10.00, eps: 24.10, bvps: 300.67 },
+  { code: 'KTB',  yahoo: 'KTB.BK',  baselinePrice: 43.25,  fairValue: 35.72,  totalDps: 2.67, normalDps: 2.07, eps: 3.45,  bvps: 33.20 },
+  { code: 'BDMS', yahoo: 'BDMS.BK', baselinePrice: 19.40,  fairValue: 24.13,  totalDps: 1.00, normalDps: 0.75, eps: 1.00,  bvps: 6.66 },
+  { code: 'MEGA', yahoo: 'MEGA.BK', baselinePrice: 34.50,  fairValue: 34.20,  totalDps: 1.60, normalDps: 1.60, eps: 2.19,  bvps: 11.72 }
 ];
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type'
+  'Access-Control-Allow-Headers': 'Content-Type, Cache-Control'
 };
 
 function sanitizeSyncKey(raw) {
@@ -17,19 +17,35 @@ function sanitizeSyncKey(raw) {
   return cleaned.slice(0, 64) || 'supasit-vi-5m';
 }
 
-async function fetchYahooQuote(item) {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(item.yahoo)}?interval=1d&range=5d`;
+async function queryYahooHost(host, yahooSymbol, forceRefresh) {
+  const cacheBuster = forceRefresh ? `&_=${Date.now()}` : '';
+  const url = `https://${host}/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=1m&range=1d${cacheBuster}`;
+  const fetchOpts = {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+      'Accept': 'application/json',
+      'Cache-Control': 'no-cache'
+    }
+  };
+  if (!forceRefresh) {
+    fetchOpts.cf = { cacheTtl: 30, cacheEverything: true };
+  }
+  const res = await fetch(url, fetchOpts);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function fetchYahooQuote(item, forceRefresh) {
   try {
-    const res = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept': 'application/json'
-      },
-      cf: { cacheTtl: 300, cacheEverything: true }
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const meta = data?.chart?.result?.[0]?.meta;
+    let data;
+    try {
+      data = await queryYahooHost('query1.finance.yahoo.com', item.yahoo, forceRefresh);
+    } catch (_e1) {
+      data = await queryYahooHost('query2.finance.yahoo.com', item.yahoo, forceRefresh);
+    }
+
+    const result = data?.chart?.result?.[0];
+    const meta = result?.meta;
     const price = Number(meta?.regularMarketPrice) || item.baselinePrice;
     const prevClose = Number(meta?.chartPreviousClose || meta?.previousClose) || price;
     const change = price - prevClose;
@@ -80,7 +96,8 @@ export default {
 
     // 1. Live Stock Quotes Endpoint
     if (url.pathname === '/api/quotes') {
-      const results = await Promise.all(SYMBOLS.map(fetchYahooQuote));
+      const forceRefresh = url.searchParams.has('refresh') || url.searchParams.has('t');
+      const results = await Promise.all(SYMBOLS.map((item) => fetchYahooQuote(item, forceRefresh)));
       const quotesMap = {};
       results.forEach((q) => {
         quotesMap[q.code] = q;
@@ -96,7 +113,7 @@ export default {
           headers: Object.assign(
             {
               'Content-Type': 'application/json; charset=utf-8',
-              'Cache-Control': 'public, max-age=60'
+              'Cache-Control': 'no-store, no-cache, must-revalidate'
             },
             CORS_HEADERS
           )

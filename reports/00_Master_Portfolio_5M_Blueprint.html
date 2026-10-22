@@ -711,6 +711,7 @@
               <th>อุตสาหกรรม / หุ้น</th>
               <th>สัดส่วน</th>
               <th>วงเงินจัดสรร (บาท)</th>
+              <th>ราคาตลาดสด (Live)</th>
               <th>ราคาต้นทุนที่ใช้คำนวณ</th>
               <th>จำนวนหุ้นที่ได้ (ปัดลงหลักร้อย)</th>
               <th>ปันผลรับ/ปี (รวมพิเศษปี 68)</th>
@@ -779,35 +780,37 @@
   <script>
     const BUALUANG_FEE_RATE = 0.00157 * 1.07; // 0.157% commission + 7% VAT = 0.16799%
 
+    const CLOUD_API_FALLBACK = 'https://thai-vi-portfolio.supasiao.workers.dev';
+
     const PORTFOLIO_STOCKS = [
       {
         code: 'PTT',
         name: '⚡ PTT (บมจ.ปตท.)',
         weight: 0.30,
-        currentPrice: 33.25,
-        targetCost: 30.50,
-        fairValue: 40.66,
-        totalDps: 2.10,
-        normalDps: 1.90,
-        interimDps: 0.80,
-        finalDps: 1.30,
+        currentPrice: 41.50,
+        targetCost: 34.50,
+        fairValue: 41.48,
+        totalDps: 2.30,
+        normalDps: 2.10,
+        interimDps: 0.90,
+        finalDps: 1.40,
         xdInterim: 'XD ต.ค. → จ่าย ต.ค.',
         xdFinal: 'XD มี.ค. → จ่าย เม.ย.',
         citRate: 0.20,
-        t1Zone: '31.00 – 32.50 บาท (รอรับแนวรับแรก)',
-        t2Zone: '29.00 – 30.50 บาท (แนวรับฐาน 1W)',
-        t3Zone: '27.00 – 28.50 บาท (โซน Deep Value)',
-        statusText: '🟡 รอตั้งรับไม้แรก ≤ 32.50',
-        statusClass: 'badge-warning',
+        t1Zone: '37.00 – 38.00 บาท (รอรับแนวรับ Neckline 1W)',
+        t2Zone: '33.50 – 35.00 บาท (แนวรับฐาน Higher Low)',
+        t3Zone: '30.50 – 32.50 บาท (โซนฐานใหญ่ Deep Value)',
+        statusText: '🔴 เกิน Fair Value (41.48) — ห้ามไล่ราคา',
+        statusClass: 'badge-danger',
         buyNow: false
       },
       {
         code: 'BBL',
         name: '🏦 BBL (ธ.กรุงเทพ)',
         weight: 0.25,
-        currentPrice: 161.50,
-        targetCost: 153.00,
-        fairValue: 214.08,
+        currentPrice: 183.50,
+        targetCost: 162.00,
+        fairValue: 237.59,
         totalDps: 10.00,
         normalDps: 10.00,
         interimDps: 2.00,
@@ -815,39 +818,39 @@
         xdInterim: 'XD ก.ย. → จ่าย ก.ย.',
         xdFinal: 'XD เม.ย. → จ่าย พ.ค.',
         citRate: 0.20,
-        t1Zone: '158.00 – 162.00 บาท (โซนสะสมไม้แรก)',
-        t2Zone: '148.00 – 155.00 บาท (แนวรับฐาน 1W)',
-        t3Zone: '138.00 – 145.00 บาท (ฐานใหญ่ 1M)',
-        statusText: '🟢 สะสมไม้ 1 ได้เมื่อ ≤ 162.00',
-        statusClass: 'badge-success',
-        buyNow: true
+        t1Zone: '172.00 – 180.50 บาท (แนวรับ Neckline & Conservative FV)',
+        t2Zone: '158.00 – 165.00 บาท (ฐานสะสม เม.ย.–พ.ค. 69)',
+        t3Zone: '138.00 – 148.00 บาท (กรอบล่างขาขึ้นใหญ่ปี 68)',
+        statusText: '🟡 ต่ำกว่า FV — รอรับไม้ 1 (≤ 180.50)',
+        statusClass: 'badge-warning',
+        buyNow: false
       },
       {
         code: 'KTB',
         name: '🏦 KTB (ธ.กรุงไทย)',
         weight: 0.10,
-        currentPrice: 34.25,
-        targetCost: 28.50,
-        fairValue: 34.33,
-        totalDps: 2.07,
-        normalDps: 1.47,
+        currentPrice: 43.25,
+        targetCost: 30.50,
+        fairValue: 35.72,
+        totalDps: 2.67,
+        normalDps: 2.07,
         interimDps: 0.43,
-        finalDps: 1.64,
+        finalDps: 2.24,
         xdInterim: 'XD ก.ย. → จ่าย ก.ย.',
         xdFinal: 'XD เม.ย. → จ่าย พ.ค.',
         citRate: 0.20,
-        t1Zone: '29.50 – 31.00 บาท (รอ RSI คลายตัว)',
-        t2Zone: '27.00 – 28.50 บาท (Target Buy Zone)',
-        t3Zone: '24.50 – 26.00 บาท (ฐาน Breakout เดิม)',
-        statusText: '🟡 รอย่อตัว ≤ 31.00',
-        statusClass: 'badge-warning',
+        t1Zone: '33.00 – 35.50 บาท (รอ RSI คลายตัวสู่ Base FV)',
+        t2Zone: '28.50 – 31.00 บาท (โซน Conservative FV 30.71)',
+        t3Zone: '25.00 – 27.50 บาท (ฐาน Breakout ใหญ่ 13 ปี)',
+        statusText: '🔴 เกิน Fair Value (35.72) — ห้ามไล่ราคา',
+        statusClass: 'badge-danger',
         buyNow: false
       },
       {
         code: 'BDMS',
         name: '🏥 BDMS (กรุงเทพดุสิตเวชการ)',
         weight: 0.25,
-        currentPrice: 19.50,
+        currentPrice: 19.40,
         targetCost: 18.60,
         fairValue: 24.13,
         totalDps: 1.00,
@@ -857,9 +860,9 @@
         xdInterim: 'XD ก.ย. → จ่าย ก.ย.',
         xdFinal: 'XD มี.ค. → จ่าย เม.ย.',
         citRate: 0.20,
-        t1Zone: '19.00 – 19.50 บาท (เข้าซื้อได้ทันที!)',
-        t2Zone: '17.50 – 18.75 บาท (Yield ปกติครบ 4%)',
-        t3Zone: 'ทะลุ 20.60 บาท (หรือรับลึก 17.40)',
+        t1Zone: '19.00 – 19.50 บาท (เข้าโซนซื้อไม้ 1 ทันที!)',
+        t2Zone: '17.50 – 18.75 บาท (Yield ปกติครบ 4.0%+)',
+        t3Zone: 'ทะลุ 20.60 บาท (หรือรับลึก 16.50–17.40)',
         statusText: '🟢 เข้าโซนไม้ 1 (≤ 19.50) — เคาะซื้อได้!',
         statusClass: 'badge-success',
         buyNow: true
@@ -868,7 +871,7 @@
         code: 'MEGA',
         name: '💊 MEGA (เมก้า ไลฟ์ไซแอ็นซ์)',
         weight: 0.10,
-        currentPrice: 33.75,
+        currentPrice: 34.50,
         targetCost: 28.00,
         fairValue: 34.20,
         totalDps: 1.60,
@@ -878,11 +881,11 @@
         xdInterim: 'XD ส.ค. → จ่าย ก.ย.',
         xdFinal: 'XD มี.ค. → จ่าย เม.ย.',
         citRate: 0.0,
-        t1Zone: '29.50 – 31.50 บาท (ต่ำกว่า Base FV)',
-        t2Zone: '26.50 – 28.50 บาท (Target Buy Zone)',
-        t3Zone: '24.00 – 26.00 บาท (Graham Floor)',
-        statusText: '🟡 รอย่อตัว ≤ 31.50',
-        statusClass: 'badge-warning',
+        t1Zone: '29.50 – 31.50 บาท (ต่ำกว่า Base FV 31.66)',
+        t2Zone: '26.50 – 28.50 บาท (Target Buy Zone MoS 20%)',
+        t3Zone: '24.00 – 26.00 บาท (Graham Floor 24.05)',
+        statusText: '🔴 เกิน Fair Value (34.20) — ห้ามไล่ราคา',
+        statusClass: 'badge-danger',
         buyNow: false
       }
     ];
@@ -890,11 +893,11 @@
     const STORAGE_KEY = 'SUPASIT_VI_ACTUAL_HOLDINGS_V2';
     let currentMode = 'target';
     let actualHoldings = {
-      PTT:  { shares: 0, avgCost: 30.50 },
-      BBL:  { shares: 0, avgCost: 161.50 },
-      KTB:  { shares: 0, avgCost: 29.50 },
-      BDMS: { shares: 0, avgCost: 19.30 },
-      MEGA: { shares: 0, avgCost: 30.00 }
+      PTT:  { shares: 0, avgCost: 34.50 },
+      BBL:  { shares: 0, avgCost: 162.00 },
+      KTB:  { shares: 0, avgCost: 30.50 },
+      BDMS: { shares: 0, avgCost: 19.40 },
+      MEGA: { shares: 0, avgCost: 28.00 }
     };
     let dividendLedger = [];
 
@@ -989,11 +992,21 @@
           holdings: actualHoldings,
           dividendLedger
         };
-        const res = await fetch('/api/portfolio', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        let res;
+        try {
+          res = await fetch('/api/portfolio', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error('local api failed');
+        } catch (_e1) {
+          res = await fetch(CLOUD_API_FALLBACK + '/api/portfolio', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
         const data = await res.json();
         if (data && data.ok && badge) {
           badge.className = 'badge badge-success';
@@ -1011,7 +1024,13 @@
       const badge = document.getElementById('saveStatusBadge');
       const syncKey = document.getElementById('syncKeyInput')?.value || 'supasit-vi-5m';
       try {
-        const res = await fetch('/api/portfolio?key=' + encodeURIComponent(syncKey), { cache: 'no-store' });
+        let res;
+        try {
+          res = await fetch('/api/portfolio?key=' + encodeURIComponent(syncKey), { cache: 'no-store' });
+          if (!res.ok) throw new Error('local api failed');
+        } catch (_e1) {
+          res = await fetch(CLOUD_API_FALLBACK + '/api/portfolio?key=' + encodeURIComponent(syncKey), { cache: 'no-store' });
+        }
         if (!res.ok) return;
         const result = await res.json();
         if (result && result.ok && result.data) {
@@ -1046,7 +1065,7 @@
       const rawCap = parseFloat(document.getElementById('capitalInput').value);
       const totalCapital = (!isNaN(rawCap) && rawCap >= 100000) ? rawCap : 5000000;
       const bdmsBudgetT1 = totalCapital * 0.25 * 0.30;
-      const bdmsLivePrice = PORTFOLIO_STOCKS.find((s) => s.code === 'BDMS')?.currentPrice || 19.30;
+      const bdmsLivePrice = PORTFOLIO_STOCKS.find((s) => s.code === 'BDMS')?.currentPrice || 19.40;
       actualHoldings.BDMS.shares = Math.floor((bdmsBudgetT1 / bdmsLivePrice) / 100) * 100;
       actualHoldings.BDMS.avgCost = Number((bdmsLivePrice * (1 + BUALUANG_FEE_RATE)).toFixed(4));
       saveActualHoldings(true, true);
@@ -1611,6 +1630,7 @@
         tr1.appendChild(createCell(st.name, true));
         tr1.appendChild(createCell(Math.round(st.weight * 100) + '%', false));
         tr1.appendChild(createCell(fmtNum(budget) + ' บ.', false));
+        tr1.appendChild(createCell(st.currentPrice.toFixed(2) + ' บ.', true));
         tr1.appendChild(createCell(priceUsed.toFixed(2) + ' บ.', false));
         tr1.appendChild(createCell(fmtNum(shares) + ' หุ้น', true));
         tr1.appendChild(createCell(fmtNum(grossDiv) + ' บ. (' + grossYieldPct + '%)', true));
