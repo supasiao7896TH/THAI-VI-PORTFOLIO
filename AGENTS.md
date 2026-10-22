@@ -1,6 +1,6 @@
 # 🎯 Project Rules: Thai VI & Dividend Portfolio Repository (PTT / Banking / Healthcare)
 
-ไฟล์นี้คือกฎประจำโปรเจกต์ (`Workspace Rule`) ที่ Antigravity (`agy`) จะโหลดเข้าสู่ระบบอัตโนมัติทุกครั้งที่ทำงานในโฟลเดอร์ `C:\Users\26007294\A(i)CODER2025TH\PTT`
+ไฟล์นี้คือกฎประจำโปรเจกต์ (`Workspace Rule`) ที่ Antigravity (`agy`) จะโหลดเข้าสู่ระบบอัตโนมัติทุกครั้งที่ทำงานในโฟลเดอร์ `C:\Users\26007294\A(i)CODER2025TH\THAI-VI-PORTFOLIO`
 
 ---
 
