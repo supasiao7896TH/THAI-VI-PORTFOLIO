@@ -209,15 +209,21 @@
     if (btn) btn.style.display = 'inline-flex';
   });
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      createLiveBar();
-      fetchAndRenderQuotes();
-      setInterval(fetchAndRenderQuotes, 60000);
-    });
-  } else {
+  const REFRESH_INTERVAL_MS = 15 * 60 * 1000; // 15 นาที (ประหยัดโควต้าตามสไตล์ VI)
+
+  function initLiveQuotes() {
     createLiveBar();
     fetchAndRenderQuotes();
-    setInterval(fetchAndRenderQuotes, 60000);
+    setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchAndRenderQuotes();
+      }
+    }, REFRESH_INTERVAL_MS);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLiveQuotes);
+  } else {
+    initLiveQuotes();
   }
 })();
