@@ -1,0 +1,20 @@
+{
+  "name": "Thai VI & Dividend Portfolio | Supasit.A",
+  "short_name": "Thai VI 5M",
+  "description": "พอร์ตหุ้นปันผลระยะยาว 5,000,000 บาท (PTT, BBL, KTB, BDMS, MEGA) อ้างอิง 56-1 และราคาตลาดสดออนไลน์",
+  "start_url": "/reports/00_Master_Portfolio_5M_Blueprint.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F7F9FC",
+  "theme_color": "#1D4ED8",
+  "lang": "th",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

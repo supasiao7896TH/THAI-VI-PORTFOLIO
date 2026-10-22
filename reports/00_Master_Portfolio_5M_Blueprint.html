@@ -1,8 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1D4ED8" />
+  <link rel="manifest" href="../manifest.json" />
+  <link rel="icon" href="../icons/icon.svg" type="image/svg+xml" />
   <title>Master VI Dividend Portfolio Blueprint (5,000,000 THB) | Supasit.A Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -670,9 +673,12 @@
       }
     }
 
+    window.PORTFOLIO_STOCKS = PORTFOLIO_STOCKS;
+    window.renderPortfolio = renderPortfolio;
     document.getElementById('capitalInput').addEventListener('input', renderPortfolio);
     renderPortfolio();
   </script>
+  <script src="../pwa-live.js" defer></script>
 </body>
 </html>
 

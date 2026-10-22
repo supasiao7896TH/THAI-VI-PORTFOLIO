@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#1D4ED8" />
+  <rect x="36" y="36" width="440" height="440" rx="88" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-opacity="0.22" />
+  <!-- Bar chart + Rising arrow representing VI Dividend Growth -->
+  <rect x="104" y="296" width="52" height="104" rx="10" fill="#FFFFFF" fill-opacity="0.85" />
+  <rect x="184" y="240" width="52" height="160" rx="10" fill="#FFFFFF" fill-opacity="0.90" />
+  <rect x="264" y="184" width="52" height="216" rx="10" fill="#FFFFFF" fill-opacity="0.95" />
+  <rect x="344" y="120" width="52" height="280" rx="10" fill="#FDE68A" />
+  <path d="M108 232 L196 172 L276 140 L370 84" fill="none" stroke="#FDE68A" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+  <polygon points="392,72 344,76 376,114" fill="#FDE68A" />
+  <text x="256" y="454" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="700" fill="#FFFFFF" letter-spacing="2">THAI VI 5M</text>
+</svg>

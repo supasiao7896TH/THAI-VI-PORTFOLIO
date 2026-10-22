@@ -1,0 +1,14 @@
+node_modules
+.git
+.github
+.wrangler
+wrangler.jsonc
+worker.js
+56-1_OneReport
+CLAUDE.md
+AGENTS.md
+agents.md
+HANDOFF.md
+context.md
+README.md
+reports/*.md
