@@ -32,10 +32,11 @@
 ## 🗂️ โครงสร้างหมวดหมู่ไฟล์ใน Repository (Directory Structure)
 
 ```text
-PTT/
+THAI-VI-PORTFOLIO/
 ├── AGENTS.md                                       # กฎประจำโปรเจกต์ (agy โหลดเข้าสมองอัตโนมัติทุกครั้ง)
 ├── HANDOFF.md                                      # สมุดส่งเวรบันทึกสถานะพอร์ต & SOP สำหรับอัปเดตงานข้ามปี
 ├── README.md                                       # หน้าสารบัญหลัก Master VI Portfolio
+├── index.html                                      # หน้าแรกสำหรับเปิดดูรายงานผ่านเว็บ (GitHub Pages)
 ├── 56-1_OneReport/                                 # 📂 1. หมวดเอกสาร 56-1 One Report แยกตามปี พ.ศ.
 │   └── 2568/
 │       ├── 56-1_2568_PTT.zip
