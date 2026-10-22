@@ -7,6 +7,16 @@
 
 ---
 
+## 🌐 คลิกเปิดดูหน้าเว็บรายงานออนไลน์ (Live Interactive HTML Reports)
+
+> **💡 กดลิงก์ด้านล่างเพื่อเปิดดูหน้าเว็บ Dashboard และกราฟแบบสวยงามผ่านเบราว์เซอร์ได้ทันที (ทั้งบน PC และมือถือ):**
+> 1. 🏛️ **[เปิดหน้า Dashboard จำลองพอร์ต 5,000,000 บาท (Interactive Simulator)](https://supasiao7896th.github.io/THAI-VI-PORTFOLIO/reports/00_Master_Portfolio_5M_Blueprint.html)**
+> 2. ⚡ **[เปิดรายงานเว็บกลุ่มพลังงาน: หุ้น PTT](https://supasiao7896th.github.io/THAI-VI-PORTFOLIO/reports/01_Energy_PTT_VI_Report.html)**
+> 3. 🏦 **[เปิดรายงานเว็บกลุ่มธนาคาร: BBL vs KTB](https://supasiao7896th.github.io/THAI-VI-PORTFOLIO/reports/02_Bank_BBL_vs_KTB_VI_Report.html)**
+> 4. 🏥 **[เปิดรายงานเว็บกลุ่มสุขภาพรับสังคมสูงวัย: BDMS vs MEGA](https://supasiao7896th.github.io/THAI-VI-PORTFOLIO/reports/03_Health_BDMS_vs_MEGA_VI_Report.html)**
+
+---
+
 ## 🏆 ตารางสรุปพอร์ตหุ้นปันผล 3 อุตสาหกรรมหลัก (Master VI Scorecard & Action Plan)
 
 | อุตสาหกรรม / หุ้น | สัดส่วนพอร์ต | ราคาปัจจุบัน (22 ต.ค. 69) | EPS / BVPS (ปี 2568) | P/E / P/BV | ปันผลปี 2568 (`DPS`) | Gross Yield | Fair Value อ้างอิง | Margin of Safety | คะแนน VI (`/30`) | สถานะและโซนราคาเข้าสะสม (Action Plan) |
