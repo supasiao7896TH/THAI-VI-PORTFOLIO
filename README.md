@@ -21,6 +21,10 @@
 
 ## 📂 สารบัญไฟล์รายงานใน Repository
 
+### 🏛️ 0. แผนจัดพอร์ตหุ้นปันผลระยะยาว 5,000,000 บาท (Master Portfolio Allocation & Cashflow Simulator)
+- 📄 **รายงาน Markdown:** [`PORTFOLIO_5M_VI_Blueprint_2026-10-22.md`](./PORTFOLIO_5M_VI_Blueprint_2026-10-22.md)
+- 🌐 **Interactive Portfolio Dashboard (HTML):** [`PORTFOLIO_5M_VI_Blueprint.html`](./PORTFOLIO_5M_VI_Blueprint.html)
+
 ### 1. ⚡ กลุ่มพลังงาน (Energy Sector — `PTT`)
 - 📄 **รายงาน Markdown:** [`PTT_VI_Analysis_2026-10-22.md`](./PTT_VI_Analysis_2026-10-22.md)
 - 🌐 **Interactive Web Report (HTML):** [`PTT_VI_Report.html`](./PTT_VI_Report.html)

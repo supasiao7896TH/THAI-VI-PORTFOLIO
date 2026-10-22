@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Master VI Dividend Portfolio Blueprint (5,000,000 THB) | Supasit.A Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-page: #F7F9FC;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #EFF4FF;
+      --bg-amber-subtle: #FEF9EC;
+      --bg-success-subtle: #ECFDF5;
+      --bg-warning-subtle: #FFFBEB;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #475569;
+      --brand-ink: #1D4ED8;
+      --brand-ink-hover: #1E40AF;
+      --ref-amber: #8A6410;
+      --status-success: #15803D;
+      --status-warning: #B45309;
+      --border-line: #E2E8F0;
+      --card-radius: 13px;
+      --btn-radius: 999px;
+      --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans Thai', sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.65;
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 20px 64px;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-line);
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ref-amber);
+      background-color: var(--bg-amber-subtle);
+      border: 1px solid #FDE68A;
+      padding: 6px 14px;
+      border-radius: var(--btn-radius);
+    }
+
+    .action-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: var(--btn-radius);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid var(--brand-ink);
+      background-color: var(--brand-ink);
+      color: #FFFFFF;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-pill:hover {
+      background-color: var(--brand-ink-hover);
+    }
+
+    .btn-pill.secondary {
+      background-color: var(--bg-surface);
+      color: var(--brand-ink);
+      border: 1px solid var(--brand-ink);
+    }
+
+    .btn-pill.secondary:hover,
+    .btn-pill.secondary.active {
+      background-color: var(--brand-ink);
+      color: #FFFFFF;
+    }
+
+    .btn-pill:focus-visible,
+    .capital-input:focus-visible {
+      outline: 3px solid var(--brand-ink);
+      outline-offset: 2px;
+    }
+
+    .card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-line);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-card);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .simulator-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-line);
+      border-radius: var(--card-radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .input-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .capital-input {
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-line);
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      width: 190px;
+      background-color: var(--bg-surface);
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-box {
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-line);
+      border-radius: var(--card-radius);
+      padding: 16px;
+    }
+
+    .kpi-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .kpi-sub {
+      font-size: 13px;
+      color: var(--ref-amber);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: var(--btn-radius);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background-color: var(--bg-success-subtle);
+      color: var(--status-success);
+      border: 1px solid #A7F3D0;
+    }
+
+    .badge-warning {
+      background-color: var(--bg-warning-subtle);
+      color: var(--status-warning);
+      border: 1px solid #FDE68A;
+    }
+
+    .badge-amber {
+      background-color: var(--bg-amber-subtle);
+      color: var(--ref-amber);
+      border: 1px solid #FDE68A;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-line);
+      vertical-align: top;
+    }
+
+    th {
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    tr:hover td {
+      background-color: #FAFCFF;
+    }
+
+    @media print {
+      body {
+        background-color: #FFFFFF;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div>
+        <span class="brand-tag">A-Class WebCraft | Code • Share • Inspire | by Supasit.A</span>
+      </div>
+      <div class="action-group no-print">
+        <a href="./PTT_VI_Report.html" class="btn-pill secondary" aria-label="เปิดรายงาน PTT">⚡ รายงาน PTT</a>
+        <a href="./BANK_BBL_vs_KTB_VI_Report.html" class="btn-pill secondary" aria-label="เปิดรายงาน BBL vs KTB">🏦 รายงาน BBL vs KTB</a>
+        <a href="./HEALTH_BDMS_vs_MEGA_VI_Report.html" class="btn-pill secondary" aria-label="เปิดรายงาน BDMS vs MEGA">🏥 รายงาน BDMS vs MEGA</a>
+        <button type="button" class="btn-pill" onclick="window.print()" aria-label="พิมพ์รายงานหรือบันทึกเป็น PDF">🖨️ พิมพ์ / บันทึก PDF</button>
+      </div>
+    </header>
+
+    <!-- Hero & Interactive Simulator -->
+    <section class="card">
+      <h1 class="hero-title">🏛️ แผนจัดพอร์ตหุ้นปันผลระยะยาว 5,000,000 บาท (Master VI Dividend Portfolio)</h1>
+      <p class="hero-subtitle">
+        กระจายการลงทุนใน 3 อุตสาหกรรมเสาหลัก (พลังงาน 30% · ธนาคาร 35% · สุขภาพรับสังคมสูงวัย 35%) อ้างอิงงบการเงินจริง 56-1 ปี 2568 และแผน Entry Timing 3 ไม้
+      </p>
+
+      <!-- Simulator Controls -->
+      <div class="simulator-bar no-print">
+        <div class="input-wrap">
+          <label for="capitalInput" style="font-weight:700; font-size:14px;">💰 วงเงินสดตั้งต้น (บาท):</label>
+          <input id="capitalInput" class="capital-input" type="number" min="100000" step="100000" value="5000000" aria-label="วงเงินสดตั้งต้น" />
+          <button type="button" class="btn-pill secondary" onclick="setCapital(1000000)">1 ล้าน</button>
+          <button type="button" class="btn-pill secondary" onclick="setCapital(3000000)">3 ล้าน</button>
+          <button type="button" class="btn-pill secondary active" id="btn5M" onclick="setCapital(5000000)">5 ล้าน</button>
+          <button type="button" class="btn-pill secondary" onclick="setCapital(10000000)">10 ล้าน</button>
+        </div>
+        <div class="input-wrap">
+          <button type="button" id="modeTargetBtn" class="btn-pill" onclick="setMode('target')">🎯 โหมดสะสมครบ 3 ไม้ (Target Cost)</button>
+          <button type="button" id="modeCurrentBtn" class="btn-pill secondary" onclick="setMode('current')">⚡ โหมดราคาตลาดวันนี้ (Current Price)</button>
+        </div>
+      </div>
+
+      <!-- 4 Summary KPI Boxes -->
+      <div class="grid-4">
+        <div class="kpi-box" style="border-left: 4px solid #1D4ED8;">
+          <div class="kpi-label">เงินปันผลรับรวมต่อปี (ก่อนภาษี / DPS จริง)</div>
+          <div class="kpi-value" id="kpiGrossTotal">316,015 บาท/ปี</div>
+          <div class="kpi-sub" id="kpiGrossYield">Gross Dividend Yield: 6.32% ต่อปี</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #15803D;">
+          <div class="kpi-label">เงินปันผลสุทธิต่อเดือน (หลังหักภาษี 10%)</div>
+          <div class="kpi-value" id="kpiNetMonthly">23,701 บาท/เดือน</div>
+          <div class="kpi-sub" id="kpiNetYearly">รับสุทธิปีละ 284,414 บาท (ยังไม่รวมเครดิตภาษี)</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #8A6410;">
+          <div class="kpi-label">ปันผลปกติขั้นต่ำ (ตัดปันผลพิเศษออกหมด)</div>
+          <div class="kpi-value" id="kpiNormalTotal">278,895 บาท/ปี</div>
+          <div class="kpi-sub" id="kpiNormalSub">Normal Yield: 5.58% (สุทธิ 20,917 บ./เดือน)</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #15803D;">
+          <div class="kpi-label">มูลค่าพอร์ตที่ Operating Fair Value</div>
+          <div class="kpi-value" id="kpiFairValue">6,561,525 บาท</div>
+          <div class="kpi-sub" id="kpiCapGain">กำไรส่วนต่างราคา +1,561,525 บาท (+31.2%)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Table 1: Portfolio Allocation & Dividend Simulation -->
+    <section class="card">
+      <div class="section-title">
+        <span>📊 1. ตารางจัดสรรวงเงิน จำนวนหุ้น และกระแสเงินสดปันผลรายตัว</span>
+        <span class="badge badge-amber" id="modeBadgeLabel">โหมดคำนวณ: สะสมครบ 3 ไม้ (Target Average Cost)</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>อุตสาหกรรม / หุ้น</th>
+              <th>สัดส่วน</th>
+              <th>วงเงินจัดสรร (บาท)</th>
+              <th>ราคาต้นทุนที่ใช้คำนวณ</th>
+              <th>จำนวนหุ้นที่ได้ (ปัดลงหลักร้อย)</th>
+              <th>ปันผลรับ/ปี (รวมพิเศษปี 68)</th>
+              <th>ปันผลรับ/ปี (เฉพาะปกติล้วน)</th>
+              <th>มูลค่าที่ Fair Value (บาท)</th>
+            </tr>
+          </thead>
+          <tbody id="allocationBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Table 2: 3-Tranche Execution Plan -->
+    <section class="card">
+      <div class="section-title">
+        <span>🎯 2. แผนแบ่งไม้ซื้อจริง 3 ไม้ (Day-1 Execution vs ตั้งรอรับเมื่อย่อตัว)</span>
+        <span class="badge badge-success" id="day1ActionBadge">สัปดาห์แรกใช้เงินสด 15% (750,000 บ.) + พักเงินรอช้อน 85% (4,250,000 บ.)</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>หุ้น</th>
+              <th>งบรวมต่อตัว</th>
+              <th>🟢 ไม้ที่ 1 (30%) — โซนราคา &amp; เงื่อนไข</th>
+              <th>🔵 ไม้ที่ 2 (40%) — โซนราคา &amp; เงื่อนไข</th>
+              <th>🟣 ไม้ที่ 3 (30%) — โซนราคา &amp; เงื่อนไข</th>
+              <th>สถานะปัจจุบัน (22 ต.ค. 69)</th>
+            </tr>
+          </thead>
+          <tbody id="trancheBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Table 3: Dividend Calendar & 10-Year Compounding -->
+    <section class="card">
+      <div class="section-title">
+        <span>🗓️ 3. ปฏิทินรับเงินปันผลรายปี &amp; จำลองการทบต้น 10 ปี (Snowball Effect)</span>
+        <span class="badge badge-amber">สมมติฐานนำปันผลกลับไปลงทุนซ้ำ + ปันผลเติบโตเฉลี่ย 3%/ปี</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ปีที่ลงทุน</th>
+              <th>มูลค่าพอร์ตต้นปี (บาท)</th>
+              <th>เงินปันผลรับระหว่างปี (ก่อนภาษี)</th>
+              <th>เฉลี่ยรับปันผลต่อเดือน (ก่อนภาษี)</th>
+              <th>เฉลี่ยรับสุทธิต่อเดือน (หักภาษี 10%)</th>
+              <th>มูลค่าพอร์ตปลายปีหลังทบต้น (บาท)</th>
+            </tr>
+          </thead>
+          <tbody id="snowballBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const PORTFOLIO_STOCKS = [
+      {
+        code: 'PTT',
+        name: '⚡ PTT (บมจ.ปตท.)',
+        weight: 0.30,
+        currentPrice: 33.25,
+        targetCost: 30.50,
+        fairValue: 40.66,
+        totalDps: 2.10,
+        normalDps: 1.90,
+        t1Zone: '31.00 – 32.50 บาท (รอรับแนวรับแรก)',
+        t2Zone: '29.00 – 30.50 บาท (แนวรับฐาน 1W)',
+        t3Zone: '27.00 – 28.50 บาท (โซน Deep Value)',
+        statusText: '🟡 รอตั้งรับไม้แรก 31.00–32.50',
+        statusClass: 'badge-warning',
+        buyNow: false
+      },
+      {
+        code: 'BBL',
+        name: '🏦 BBL (ธ.กรุงเทพ)',
+        weight: 0.25,
+        currentPrice: 161.50,
+        targetCost: 153.00,
+        fairValue: 214.08,
+        totalDps: 10.00,
+        normalDps: 10.00,
+        t1Zone: '158.00 – 161.50 บาท (เข้าซื้อได้ทันที!)',
+        t2Zone: '148.00 – 155.00 บาท (แนวรับฐาน 1W)',
+        t3Zone: '138.00 – 145.00 บาท (ฐานใหญ่ 1M)',
+        statusText: '🟢 สะสมไม้ 1 ได้ทันที (P/BV 0.53x)',
+        statusClass: 'badge-success',
+        buyNow: true
+      },
+      {
+        code: 'KTB',
+        name: '🏦 KTB (ธ.กรุงไทย)',
+        weight: 0.10,
+        currentPrice: 34.25,
+        targetCost: 28.50,
+        fairValue: 34.33,
+        totalDps: 2.07,
+        normalDps: 1.47,
+        t1Zone: '29.50 – 31.00 บาท (รอ RSI คลายตัว)',
+        t2Zone: '27.00 – 28.50 บาท (Target Buy Zone)',
+        t3Zone: '24.50 – 26.00 บาท (ฐาน Breakout เดิม)',
+        statusText: '🟡 รอย่อตัว (RSI 1M Overbought)',
+        statusClass: 'badge-warning',
+        buyNow: false
+      },
+      {
+        code: 'BDMS',
+        name: '🏥 BDMS (กรุงเทพดุสิตเวชการ)',
+        weight: 0.25,
+        currentPrice: 19.50,
+        targetCost: 18.60,
+        fairValue: 24.13,
+        totalDps: 1.00,
+        normalDps: 0.75,
+        t1Zone: '19.00 – 19.50 บาท (เข้าซื้อได้ทันที!)',
+        t2Zone: '17.50 – 18.75 บาท (Yield ปกติครบ 4%)',
+        t3Zone: 'ทะลุ 20.60 บาท (หรือรับลึก 17.40)',
+        statusText: '🟢 สะสมไม้ 1 ได้ทันที (ฐาน 10 ปี)',
+        statusClass: 'badge-success',
+        buyNow: true
+      },
+      {
+        code: 'MEGA',
+        name: '💊 MEGA (เมก้า ไลฟ์ไซแอ็นซ์)',
+        weight: 0.10,
+        currentPrice: 33.75,
+        targetCost: 28.00,
+        fairValue: 34.20,
+        totalDps: 1.60,
+        normalDps: 1.60,
+        t1Zone: '29.50 – 31.50 บาท (ต่ำกว่า Base FV)',
+        t2Zone: '26.50 – 28.50 บาท (Target Buy Zone)',
+        t3Zone: '24.00 – 26.00 บาท (Graham Floor)',
+        statusText: '🟡 รอย่อตัวจาก Double Top',
+        statusClass: 'badge-warning',
+        buyNow: false
+      }
+    ];
+
+    let currentMode = 'target';
+
+    function fmtNum(n) {
+      return Math.round(n).toLocaleString('th-TH');
+    }
+
+    function setCapital(amount) {
+      const input = document.getElementById('capitalInput');
+      input.value = amount;
+      renderPortfolio();
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      const targetBtn = document.getElementById('modeTargetBtn');
+      const currentBtn = document.getElementById('modeCurrentBtn');
+      const badge = document.getElementById('modeBadgeLabel');
+
+      if (mode === 'target') {
+        targetBtn.className = 'btn-pill';
+        currentBtn.className = 'btn-pill secondary';
+        badge.textContent = 'โหมดคำนวณ: สะสมครบ 3 ไม้ (Target Average Cost)';
+      } else {
+        targetBtn.className = 'btn-pill secondary';
+        currentBtn.className = 'btn-pill';
+        badge.textContent = 'โหมดคำนวณ: ซื้อที่ราคาตลาดปัจจุบัน (Current Market Price)';
+      }
+      renderPortfolio();
+    }
+
+    function createCell(text, isStrong) {
+      const td = document.createElement('td');
+      if (isStrong) {
+        const strong = document.createElement('strong');
+        strong.textContent = text;
+        td.appendChild(strong);
+      } else {
+        td.textContent = text;
+      }
+      return td;
+    }
+
+    function renderPortfolio() {
+      const rawCap = parseFloat(document.getElementById('capitalInput').value);
+      const totalCapital = (!isNaN(rawCap) && rawCap >= 100000) ? rawCap : 5000000;
+
+      const allocBody = document.getElementById('allocationBody');
+      const trancheBody = document.getElementById('trancheBody');
+      const snowballBody = document.getElementById('snowballBody');
+
+      while (allocBody.firstChild) allocBody.removeChild(allocBody.firstChild);
+      while (trancheBody.firstChild) trancheBody.removeChild(trancheBody.firstChild);
+      while (snowballBody.firstChild) snowballBody.removeChild(snowballBody.firstChild);
+
+      let sumGrossDiv = 0;
+      let sumNormalDiv = 0;
+      let sumFairVal = 0;
+      let day1BuyNow = 0;
+
+      PORTFOLIO_STOCKS.forEach((st) => {
+        const budget = totalCapital * st.weight;
+        const priceUsed = (currentMode === 'target') ? st.targetCost : st.currentPrice;
+        const shares = Math.floor((budget / priceUsed) / 100) * 100;
+        const grossDiv = shares * st.totalDps;
+        const normDiv = shares * st.normalDps;
+        const fairVal = shares * st.fairValue;
+        const grossYieldPct = ((grossDiv / budget) * 100).toFixed(2);
+        const normYieldPct = ((normDiv / budget) * 100).toFixed(2);
+
+        sumGrossDiv += grossDiv;
+        sumNormalDiv += normDiv;
+        sumFairVal += fairVal;
+
+        const t1Amt = budget * 0.30;
+        const t2Amt = budget * 0.40;
+        const t3Amt = budget * 0.30;
+        if (st.buyNow) {
+          day1BuyNow += t1Amt;
+        }
+
+        // Row in Table 1
+        const tr1 = document.createElement('tr');
+        tr1.appendChild(createCell(st.name, true));
+        tr1.appendChild(createCell(Math.round(st.weight * 100) + '%', false));
+        tr1.appendChild(createCell(fmtNum(budget) + ' บ.', false));
+        tr1.appendChild(createCell(priceUsed.toFixed(2) + ' บ.', false));
+        tr1.appendChild(createCell(fmtNum(shares) + ' หุ้น', true));
+        tr1.appendChild(createCell(fmtNum(grossDiv) + ' บ. (' + grossYieldPct + '%)', true));
+        tr1.appendChild(createCell(fmtNum(normDiv) + ' บ. (' + normYieldPct + '%)', false));
+        tr1.appendChild(createCell(fmtNum(fairVal) + ' บ. (@' + st.fairValue.toFixed(2) + ')', false));
+        allocBody.appendChild(tr1);
+
+        // Row in Table 2
+        const tr2 = document.createElement('tr');
+        tr2.appendChild(createCell(st.name, true));
+        tr2.appendChild(createCell(fmtNum(budget) + ' บ.', true));
+        tr2.appendChild(createCell(fmtNum(t1Amt) + ' บ. | ' + st.t1Zone, false));
+        tr2.appendChild(createCell(fmtNum(t2Amt) + ' บ. | ' + st.t2Zone, false));
+        tr2.appendChild(createCell(fmtNum(t3Amt) + ' บ. | ' + st.t3Zone, false));
+
+        const statusTd = document.createElement('td');
+        const badgeSpan = document.createElement('span');
+        badgeSpan.className = 'badge ' + st.statusClass;
+        badgeSpan.textContent = st.statusText;
+        statusTd.appendChild(badgeSpan);
+        tr2.appendChild(statusTd);
+        trancheBody.appendChild(tr2);
+      });
+
+      const portGrossYield = ((sumGrossDiv / totalCapital) * 100).toFixed(2);
+      const portNormYield = ((sumNormalDiv / totalCapital) * 100).toFixed(2);
+      const netAnnual = sumGrossDiv * 0.90;
+      const netMonthly = netAnnual / 12;
+      const netNormMonthly = (sumNormalDiv * 0.90) / 12;
+      const capGain = sumFairVal - totalCapital;
+      const capGainPct = ((capGain / totalCapital) * 100).toFixed(1);
+
+      document.getElementById('kpiGrossTotal').textContent = fmtNum(sumGrossDiv) + ' บาท/ปี';
+      document.getElementById('kpiGrossYield').textContent = 'Gross Dividend Yield: ' + portGrossYield + '% ต่อปี';
+      document.getElementById('kpiNetMonthly').textContent = fmtNum(netMonthly) + ' บาท/เดือน';
+      document.getElementById('kpiNetYearly').textContent = 'รับสุทธิปีละ ' + fmtNum(netAnnual) + ' บาท (หลังภาษี 10%)';
+      document.getElementById('kpiNormalTotal').textContent = fmtNum(sumNormalDiv) + ' บาท/ปี';
+      document.getElementById('kpiNormalSub').textContent = 'Normal Yield: ' + portNormYield + '% (สุทธิ ' + fmtNum(netNormMonthly) + ' บ./เดือน)';
+      document.getElementById('kpiFairValue').textContent = fmtNum(sumFairVal) + ' บาท';
+      document.getElementById('kpiCapGain').textContent = 'กำไรส่วนต่างราคา +' + fmtNum(capGain) + ' บาท (+' + capGainPct + '%)';
+
+      const reserveCash = totalCapital - day1BuyNow;
+      document.getElementById('day1ActionBadge').textContent =
+        'สัปดาห์แรกเคาะซื้อทันที 15% (' + fmtNum(day1BuyNow) + ' บ.) + พักเงินรอช้อน 85% (' + fmtNum(reserveCash) + ' บ.)';
+
+      // Snowball 10-year simulation
+      const baseYieldRate = sumGrossDiv / totalCapital;
+      let runningPort = totalCapital;
+      const yearsToShow = [1, 2, 3, 5, 7, 10];
+
+      for (let y = 1; y <= 10; y++) {
+        const startVal = runningPort;
+        const divYear = startVal * baseYieldRate;
+        const netDivYear = divYear * 0.90;
+        const endVal = (startVal * 1.03) + netDivYear;
+        runningPort = endVal;
+
+        if (yearsToShow.includes(y)) {
+          const trS = document.createElement('tr');
+          trS.appendChild(createCell('ปีที่ ' + y, true));
+          trS.appendChild(createCell(fmtNum(startVal) + ' บาท', false));
+          trS.appendChild(createCell(fmtNum(divYear) + ' บาท/ปี', true));
+          trS.appendChild(createCell(fmtNum(divYear / 12) + ' บาท/เดือน', false));
+          trS.appendChild(createCell(fmtNum(netDivYear / 12) + ' บาท/เดือน', true));
+          trS.appendChild(createCell(fmtNum(endVal) + ' บาท', true));
+          snowballBody.appendChild(trS);
+        }
+      }
+    }
+
+    document.getElementById('capitalInput').addEventListener('input', renderPortfolio);
+    renderPortfolio();
+  </script>
+</body>
+</html>
