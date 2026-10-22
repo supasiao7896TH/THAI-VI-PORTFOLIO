@@ -187,16 +187,18 @@
 
     const refreshBtn = document.createElement('button');
     refreshBtn.type = 'button';
+    refreshBtn.className = 'btn-pill secondary';
     refreshBtn.setAttribute('aria-label', 'อัปเดตราคาหุ้นล่าสุด');
-    refreshBtn.style.cssText = 'min-height:44px;padding:0 16px;border-radius:999px;border:1px solid #1D4ED8;background:#FFFFFF;color:#1D4ED8;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;';
+    refreshBtn.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid #1D4ED8;background:#FFFFFF;color:#1D4ED8;font-family:inherit;font-size:14px;font-weight:600;line-height:1;text-align:center;cursor:pointer;';
     refreshBtn.textContent = '🔄 อัปเดตราคาสด';
     refreshBtn.addEventListener('click', () => fetchAndRenderQuotes(true));
 
     const installBtn = document.createElement('button');
     installBtn.id = 'viPwaInstallBtn';
     installBtn.type = 'button';
+    installBtn.className = 'btn-pill';
     installBtn.setAttribute('aria-label', 'ติดตั้งแอปลงเครื่อง');
-    installBtn.style.cssText = 'display:none;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid #1D4ED8;background:#1D4ED8;color:#FFFFFF;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;';
+    installBtn.style.cssText = 'display:none;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid #1D4ED8;background:#1D4ED8;color:#FFFFFF;font-family:inherit;font-size:14px;font-weight:600;line-height:1;text-align:center;cursor:pointer;';
     installBtn.textContent = '📲 ติดตั้งแอป (PWA)';
     installBtn.addEventListener('click', async () => {
       if (!deferredInstallPrompt) return;
