@@ -1,7 +1,7 @@
 # 📋 HANDOFF & PROJECT STATE: พอร์ตหุ้นปันผลระยะยาว (VI Core Portfolio)
 **เจ้าของพอร์ต:** พี่ A (`A-Class WebCraft | Code • Share • Inspire | by Supasit.A`)  
 **โบรกเกอร์หลัก:** Bualuang Securities (หลักทรัพย์บัวหลวง)  
-**Repository:** `https://github.com/supasiao7896TH/PTT`  
+**Repository:** `https://github.com/supasiao7896TH/THAI-VI-PORTFOLIO`  
 **อัปเดตสถานะล่าสุด:** 22 ตุลาคม 2569 (2026-10-22)
 
 > **📌 คำสั่งสำหรับ AI (`agy`) ที่เข้ามาอ่านไฟล์นี้ใน Session ใหม่:**
