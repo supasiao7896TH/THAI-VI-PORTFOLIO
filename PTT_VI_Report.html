@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายงานวิเคราะห์หุ้น PTT (VI Analysis &amp; Entry Timing) — Supasit.A Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-page: #F7F9FC;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F1F5F9;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #475569;
+      --brand-blue: #1D4ED8;
+      --brand-blue-bg: #EFF6FF;
+      --ref-amber: #8A6410;
+      --ref-amber-bg: #FEF9C3;
+      --status-green: #15803D;
+      --status-green-bg: #DCFCE7;
+      --status-red: #B91C1C;
+      --status-red-bg: #FEE2E2;
+      --border-color: #E2E8F0;
+      --card-radius: 13px;
+      --pill-radius: 999px;
+      --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.65;
+      padding: 24px 16px 64px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    header.report-header {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-subtle);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .brand-tag {
+      display: inline-block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--ref-amber);
+      background-color: var(--ref-amber-bg);
+      padding: 4px 12px;
+      border-radius: var(--card-radius);
+      margin-bottom: 10px;
+      border: 1px solid #FDE047;
+    }
+
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 20px;
+      background-color: var(--brand-blue);
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid var(--brand-blue);
+      border-radius: var(--pill-radius);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-pill:hover {
+      background-color: #1E40AF;
+    }
+
+    .btn-pill:focus-visible {
+      outline: 3px solid var(--brand-blue);
+      outline-offset: 2px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-subtle);
+      padding: 20px;
+    }
+
+    .kpi-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .kpi-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .kpi-note {
+      font-size: 0.825rem;
+      color: var(--text-secondary);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 6px;
+    }
+
+    .badge-green {
+      background-color: var(--status-green-bg);
+      color: var(--status-green);
+    }
+
+    .badge-amber {
+      background-color: var(--ref-amber-bg);
+      color: var(--ref-amber);
+    }
+
+    .badge-red {
+      background-color: var(--status-red-bg);
+      color: var(--status-red);
+    }
+
+    .section-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-subtle);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 20px 0 10px;
+    }
+
+    p, li {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    ul, ol {
+      padding-left: 22px;
+      margin-bottom: 14px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin: 14px 0 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 11px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #FAFBFD;
+    }
+
+    .callout {
+      background-color: var(--brand-blue-bg);
+      border: 1px solid #BFDBFE;
+      border-radius: var(--card-radius);
+      padding: 16px 20px;
+      margin: 16px 0;
+    }
+
+    .callout-amber {
+      background-color: var(--ref-amber-bg);
+      border: 1px solid #FDE047;
+      border-radius: var(--card-radius);
+      padding: 16px 20px;
+      margin: 16px 0;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    .chart-box {
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      padding: 16px;
+      background-color: var(--bg-page);
+    }
+
+    .chart-box img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      display: block;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 32px;
+    }
+
+    @media print {
+      body {
+        background-color: #FFFFFF;
+        padding: 0;
+      }
+      .btn-pill {
+        display: none;
+      }
+      .section-card, header.report-header, .kpi-card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="report-header">
+      <div>
+        <span class="brand-tag">A-Class WebCraft · Code • Share • Inspire · by Supasit.A</span>
+        <h1>รายงานวิเคราะห์ปัจจัยพื้นฐาน (VI) และจังหวะเข้าลงทุน — หุ้น PTT</h1>
+        <p class="subtitle">บริษัท ปตท. จำกัด (มหาชน) · อ้างอิงงบการเงินปี 2568 (56-1 One Report) และกราฟ TF Month / TF Week ณ วันที่ 22 ต.ค. 2569</p>
+      </div>
+      <div class="action-bar">
+        <button type="button" class="btn-pill" aria-label="พิมพ์หรือบันทึกเป็น PDF" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+      </div>
+    </header>
+
+    <section class="kpi-grid" aria-label="ตัวชี้วัดสำคัญ">
+      <div class="kpi-card">
+        <div class="kpi-label">VI Scorecard (ที่ราคา 40.75 บาท)</div>
+        <div class="kpi-value">24 / 30 <span class="badge badge-green">ผ่านเกณฑ์ VI</span></div>
+        <div class="kpi-note">หากย่อลงโซนฐาน 32.00 บาท จะได้ <strong>27 / 30 (Strong Buy)</strong></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">มูลค่าเหมาะสม (Base Case 4 วิธี)</div>
+        <div class="kpi-value">41.48 บาท</div>
+        <div class="kpi-note">ที่ราคาปัจจุบัน 40.75 บาท เหลือ <strong>MoS +1.76%</strong> (ใกล้เต็มมูลค่า)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">เงินปันผลปี 2568 (DPS)</div>
+        <div class="kpi-value">2.30 บาท/หุ้น</div>
+        <div class="kpi-note">ปันผลปกติ 2.10 + พิเศษ 0.20 บาท (Yield 5.64% ที่ราคา 40.75 บาท)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">ข้อเสนอแนะจังหวะ (Entry Timing)</div>
+        <div class="kpi-value"><span class="badge badge-amber">ถือเงินสดรอ (Wait &amp; See)</span></div>
+        <div class="kpi-note">RSI Week = 59.13 เพิ่งหักหัวลงจากโซนตึงตัว รอรับโซน 37–38 และ 33.5–35 บาท</div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>1. สรุปปัจจัยพื้นฐานและงบการเงินปี 2568 (56-1 One Report)</h2>
+      <p><strong>คูเมืองทางเศรษฐกิจ (Economic Moat):</strong> PTT มีสถานะผูกขาดโดยธรรมชาติ (Natural Monopoly) ในโครงสร้างพื้นฐานพลังงานหลักของไทย ทั้งระบบท่อส่งก๊าซธรรมชาติ โรงแยกก๊าซธรรมชาติ (GSP) และสถานีรับ-จ่าย LNG พร้อมถือหุ้นใหญ่ในบริษัทแกนนำครบวงจร (PTTEP, PTTGC, TOP, IRPC, GPSC, OR และธุรกิจใหม่ด้าน Life Sciences)</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>รายการสำคัญ</th>
+              <th>ปี 2566 (2023)</th>
+              <th>ปี 2567 (2024)</th>
+              <th>ปี 2568 (2025)</th>
+              <th>การวิเคราะห์เชิงคุณภาพ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>รายได้จากการขาย (Revenue)</strong></td>
+              <td>3,144,551 ล้าน฿</td>
+              <td>3,090,453 ล้าน฿</td>
+              <td><strong>2,662,145 ล้าน฿</strong></td>
+              <td>ลดลง -13.9% YoY ตามทิศทางราคาน้ำมันโลกที่ลดลงสู่ระดับ 69.2 USD/bbl</td>
+            </tr>
+            <tr>
+              <td><strong>EBITDA</strong></td>
+              <td>426,895 ล้าน฿</td>
+              <td>396,234 ล้าน฿</td>
+              <td><strong>332,849 ล้าน฿</strong></td>
+              <td>ลดลง -16.0% YoY จากส่วนต่างราคาปิโตรเคมีและธุรกิจก๊าซฯ ที่ชะลอตัว</td>
+            </tr>
+            <tr>
+              <td><strong>กำไรสุทธิส่วนของบริษัทใหญ่</strong></td>
+              <td>112,024 ล้าน฿</td>
+              <td>90,072 ล้าน฿</td>
+              <td><strong>90,166 ล้าน฿</strong></td>
+              <td>ทรงตัว +0.1% YoY (ได้แรงหนุนจากกำไรอัตราแลกเปลี่ยน 20,016 ล้าน฿ และรายการพิเศษสุทธิ +14,400 ล้าน฿)</td>
+            </tr>
+            <tr>
+              <td><strong>กำไรต่อหุ้น (EPS) / มูลค่าทางบัญชี (BVPS)</strong></td>
+              <td>3.92 / 39.25 บาท</td>
+              <td>3.15 / 40.25 บาท</td>
+              <td><strong>3.15 / 39.80 บาท</strong></td>
+              <td>รักษาระดับ EPS ที่ 3.15 บาท และฐานสินทรัพย์ต่อหุ้นแน่นหนาเกือบ 40 บาท</td>
+            </tr>
+            <tr>
+              <td><strong>ROE / ROA</strong></td>
+              <td>10.35% / 5.71%</td>
+              <td>7.94% / 4.65%</td>
+              <td><strong>7.92% / 4.64%</strong></td>
+              <td>ประคองตัวได้ดีในรอบวัฏจักรอุตสาหกรรมขาลง</td>
+            </tr>
+            <tr>
+              <td><strong>IBD/E (หนี้สินที่มีภาระดอกเบี้ยต่อทุน)</strong></td>
+              <td>0.67 เท่า</td>
+              <td>0.63 เท่า</td>
+              <td><strong>0.60 เท่า</strong></td>
+              <td>ลดลงต่อเนื่อง (Net IBD/E เพียง 0.35 เท่า) และมีเงินสดรวมเงินลงทุนระยะสั้นสูงถึง 392,756 ล้าน฿</td>
+            </tr>
+            <tr>
+              <td><strong>กระแสเงินสดดำเนินงาน (OCF) / FCF</strong></td>
+              <td>406,690 / ~226,395 ล้าน฿</td>
+              <td>369,243 / ~212,447 ล้าน฿</td>
+              <td><strong>299,366 / ~130,731 ล้าน฿</strong></td>
+              <td>OCF สูงกว่ากำไรสุทธิถึง 3.3 เท่า รองรับการจ่ายปันผลระดับ 6.5 หมื่นล้านบาท/ปี ได้อย่างปลอดภัย</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>2. การประเมินมูลค่าหุ้น 4 วิธี (4-Method Valuation) และ VI Scorecard (/30)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>วิธีประเมินมูลค่า (Valuation Method)</th>
+              <th>สมมติฐานหลัก</th>
+              <th>มูลค่าเหมาะสม (บาท/หุ้น)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Discounted Cash Flow (DCF)</strong></td>
+              <td>Attributable FCF ~1.05–1.15 แสนล้าน฿, WACC 8.0%, Terminal Growth 1.5%, หัก Conglomerate Discount 20%</td>
+              <td><strong>38.40 บาท</strong></td>
+            </tr>
+            <tr>
+              <td><strong>2. Relative P/E Valuation</strong></td>
+              <td>EPS 3.15 บาท × Target P/E 11.5 เท่า (ค่าเฉลี่ยระยะยาวของหุ้นพลังงานปันผล)</td>
+              <td><strong>36.23 บาท</strong></td>
+            </tr>
+            <tr>
+              <td><strong>3. Graham Number</strong></td>
+              <td>√(22.5 × EPS 3.15 × BVPS 39.80) สะท้อนมูลค่าสินทรัพย์ป้องกันความเสี่ยง</td>
+              <td><strong>53.11 บาท</strong></td>
+            </tr>
+            <tr>
+              <td><strong>4. Dividend Discount Model (DDM)</strong></td>
+              <td>คิดแบบอนุรักษนิยมจากปันผลปกติ 2.10 บาท (ไม่รวมปันผลพิเศษ 0.20 บาท), r = 8.0%, g = 2.5%</td>
+              <td><strong>38.18 บาท</strong></td>
+            </tr>
+            <tr>
+              <td colspan="2"><strong>มูลค่าเหมาะสมเฉลี่ย (Base Case — เฉลี่ย 4 วิธี)</strong></td>
+              <td><strong>41.48 บาท (โซนรับ MoS 15–25% = 31.10–35.25 บาท)</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>เปรียบเทียบตัวชี้วัดและคะแนน VI Scorecard ที่ราคา 32.00 บาท vs 40.75 บาท</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>หมวดการประเมิน</th>
+              <th>คะแนนเต็ม</th>
+              <th>ที่ราคา 32.00 บาท (สิ้นปี 2568)</th>
+              <th>ที่ราคา 40.75 บาท (กราฟปัจจุบัน)</th>
+              <th>คำอธิบาย</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>หมวด A: ความแข็งแกร่งธุรกิจและงบการเงิน</strong></td>
+              <td>10</td>
+              <td><strong>10 / 10</strong></td>
+              <td><strong>10 / 10</strong></td>
+              <td>OCF แกร่งมาก, Net IBD/E ต่ำเพียง 0.35x, ผูกขาดท่อก๊าซธรรมชาติ</td>
+            </tr>
+            <tr>
+              <td><strong>หมวด B: ความถูกแพงของราคา (Valuation)</strong></td>
+              <td>10</td>
+              <td><strong>7 / 10</strong> (MoS +22.85%, P/BV 0.80x)</td>
+              <td><strong>4 / 10</strong> (MoS +1.76%, P/BV 1.02x)</td>
+              <td>เมื่อราคาขึ้นมาที่ 40.75 บาท แต้มต่อ Margin of Safety หายไปเกือบหมด</td>
+            </tr>
+            <tr>
+              <td><strong>หมวด C: คุณภาพเงินปันผล (Dividend)</strong></td>
+              <td>6</td>
+              <td><strong>6 / 6</strong> (Gross Yield 7.19%)</td>
+              <td><strong>6 / 6</strong> (Gross Yield 5.64%)</td>
+              <td>ปันผลปกติสุทธิหลังภาษีที่ 40.75 บาท เหลือ 4.64% (รวมปันผลพิเศษได้ 5.08%)</td>
+            </tr>
+            <tr>
+              <td><strong>หมวด D: ธรรมาภิบาลและความยั่งยืน</strong></td>
+              <td>4</td>
+              <td><strong>4 / 4</strong></td>
+              <td><strong>4 / 4</strong></td>
+              <td>CGR 5 ดาว, สมาชิก DJSI, ปรับพอร์ตมุ่งสู่ LNG และ Life Sciences ชัดเจน</td>
+            </tr>
+            <tr>
+              <td><strong>รวมคะแนน VI Scorecard</strong></td>
+              <td><strong>30</strong></td>
+              <td><strong>27 / 30 (Strong Buy)</strong></td>
+              <td><strong>24 / 30 (รอสะสมเมื่อย่อตัว)</strong></td>
+              <td><strong>หุ้นดี แต่ราคาปัจจุบันไม่ถูก ต้องรอจังหวะย่อตัว</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>3. วิเคราะห์จังหวะเข้าลงทุน (Entry Timing) จากกราฟ TF Month และ TF Week</h2>
+      <div class="callout-amber">
+        <div class="callout-title">สรุปคำตอบเรื่อง RSI และช่วงต้นรอบ</div>
+        <p>ปัจจุบัน PTT <strong>ไม่ได้อยู่ใกล้ RSI 30 และไม่ใช่ช่วงต้นรอบแล้ว</strong> ทั้งในกราฟรายเดือน (RSI = 66.73) และรายสัปดาห์ (RSI = 59.13) โดยราคาเพิ่งวิ่งจากฐาน 30.50 บาท ขึ้นไปทำจุดสูงสุดที่ 43.75 บาท (บวกขึ้นมา +43%) แล้วกำลังเริ่มพักฐานลงมาที่ 40.75 บาท จึงควร <strong>ถือเงินสดรอรับเมื่อย่อตัวตามโซนแนวรับ</strong> ไม่ควรไล่ราคาตรงนี้</p>
+      </div>
+
+      <h3>ตารางแผนตั้งรับสะสมหุ้น (Accumulation Zones สำหรับพอร์ต Core Holding)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ลำดับไม้สะสม</th>
+              <th>โซนแนวรับเป้าหมาย</th>
+              <th>โครงสร้างทางเทคนิค (TF Week)</th>
+              <th>Margin of Safety (เทียบ 41.48฿)</th>
+              <th>Gross Yield (ปกติ 2.10฿ / รวมพิเศษ 2.30฿)</th>
+              <th>สัดส่วนที่แนะนำ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ราคาปัจจุบัน (40.75 บาท)</strong></td>
+              <td><span class="badge badge-red">ยังไม่เข้าซื้อ</span></td>
+              <td>เพิ่งย่อจากยอด 43.75฿, RSI Week (59.13) เพิ่งตัดเส้นค่าเฉลี่ย (67.85) ลง</td>
+              <td>+1.76%</td>
+              <td>5.15% / 5.64%</td>
+              <td><strong>0% (Wait &amp; See)</strong></td>
+            </tr>
+            <tr>
+              <td><strong>ไม้ที่ 1 (รับย่อตัวแรก)</strong></td>
+              <td><strong>37.00 – 38.00 บาท</strong></td>
+              <td>หัวแนวต้านเดิม (Breakout Neckline) ช่วงต้นปี–กลางปี 2026 (รอ RSI Week พักแถว 45–50)</td>
+              <td>8.4% – 10.8%</td>
+              <td><strong>5.53%–5.68%</strong> / 6.05%–6.22%</td>
+              <td><strong>20% – 30%</strong></td>
+            </tr>
+            <tr>
+              <td><strong>ไม้ที่ 2 (โซนสะสมหลัก VI)</strong></td>
+              <td><strong>33.50 – 35.00 บาท</strong></td>
+              <td>ฐานพักตัว Higher Low ช่วง พ.ค.–ก.ค. 2026 (ผ่านเกณฑ์ MoS &gt; 15%)</td>
+              <td><strong>15.6% – 19.2%</strong></td>
+              <td><strong>6.00%–6.27%</strong> / 6.57%–6.87%</td>
+              <td><strong>40% – 50%</strong></td>
+            </tr>
+            <tr>
+              <td><strong>ไม้ที่ 3 (โซนปลอดภัยสูง)</strong></td>
+              <td><strong>30.50 – 32.50 บาท</strong></td>
+              <td>ฐานสะสมใหญ่ปี 2024–2025 (กรณีตลาดปรับฐานแรงจน RSI Week ลงใกล้ 35–40)</td>
+              <td><strong>21.6% – 26.5%</strong></td>
+              <td><strong>6.46%–6.89%</strong> / 7.08%–7.54%</td>
+              <td><strong>20% – 30%</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-box">
+          <strong>ภาพที่ 1: กราฟรายเดือน (TF 1M — PTT001.png)</strong>
+          <p>แสดงภาพใหญ่ตั้งแต่ปี 2004–2026: ราคาปัจจุบัน 40.75 บาท ชนแนวต้านยอดเดิมปี 2021–2022 แถว 40.50–42.00 บาท และ RSI รายเดือนอยู่ที่ 66.73</p>
+          <img src="./PTT001.png" alt="กราฟหุ้น PTT รายเดือน TF 1M">
+        </div>
+        <div class="chart-box">
+          <strong>ภาพที่ 2: กราฟรายสัปดาห์ (TF 1W — PTT002.png)</strong>
+          <p>แสดงจังหวะระยะกลาง: ราคาทำจุดสูงสุดที่ 43.75 บาท (RSI Week ทะลุ 77) ก่อนย่อตัวลงมาที่ 40.75 บาท โดยเส้น RSI (59.13) เพิ่งตัดเส้นค่าเฉลี่ย (67.85) ลงมา</p>
+          <img src="./PTT002.png" alt="กราฟหุ้น PTT รายสัปดาห์ TF 1W">
+        </div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>4. ธรรมชาติของการลงจากยอดสูงสุด (Drawdown 30% → 40% → 50% → 70%) และเกณฑ์ขาย VI</h2>
+      <h3>สถิติการลงจากยอดสูงสุดจริงของ PTT ในอดีต (จากกราฟ TF Month)</h3>
+      <ul>
+        <li><strong>วิกฤต Subprime (2008):</strong> ยอด ~44.00 บาท → ก้นเหว ~14.00 บาท = <strong>-68.2%</strong> (ใกล้เคียง -70% จากวิกฤตการเงินโลก)</li>
+        <li><strong>วิกฤตน้ำมัน Shale Oil (2014–2016):</strong> ยอด ~39.50 บาท → ก้นเหว ~20.00 บาท = <strong>-49.4%</strong> (ระดับ -50% จากสงครามราคาน้ำมัน)</li>
+        <li><strong>ยอด All-Time High (2018) → COVID-19 (2020):</strong> ยอด 59.50 บาท → พักขั้นแรก 41.50 บาท (<strong>-30.3%</strong>) → ก้นเหวโควิด 23.60 บาท (<strong>-60.3%</strong>)</li>
+        <li><strong>รอบพักฐานปกติหลังโควิด (2021–2025):</strong> ยอดเด้ง 43.50 บาท → โซนฐาน 27.00–30.00 บาท = <strong>-31% ถึง -38%</strong> โดยมีปันผลระดับ 2.00 บาท/ปี คอยเป็นเบาะรับราคา</li>
+      </ul>
+
+      <div class="callout">
+        <div class="callout-title">เงื่อนไขการขายสำหรับพอร์ต Core Holding (Falsification Test — ไม่ใช้ Stop Loss ทางเทคนิค)</div>
+        <ol>
+          <li><strong>การแทรกแซงเชิงโครงสร้างจากภาครัฐ:</strong> บังคับอุดหนุนราคาพลังงานจนทำให้ OCF งบเดี่ยวติดลบ หรือธุรกิจก๊าซฯ ขาดทุนหนักต่อเนื่องเกิน 2 ปีติดต่อกัน</li>
+          <li><strong>การตัดลดปันผลปกติ:</strong> จ่ายปันผลปกติลดลงต่ำกว่า 1.60 บาท/หุ้น/ปี ติดต่อกันเกิน 2 ปี โดยไม่ได้เกิดจากวิกฤตเศรษฐกิจโลกชั่วคราว</li>
+          <li><strong>กำไรหลักหรือวินัยการเงินเสื่อมถอย:</strong> กำไรจากการดำเนินงานปกติ (Core Profit) ต่ำกว่า 60,000 ล้านบาท/ปี ต่อเนื่อง 2 ปี หรือ Net IBD/E พุ่งเกิน 1.0 เท่าจากการลงทุนที่ผิดพลาด</li>
+        </ol>
+      </div>
+    </section>
+
+    <footer>
+      จัดทำโดย Antigravity AI · มาตรฐาน Supasit.A Studio (vi-analysis &amp; technical-timing v1.1) · บันทึกเมื่อ 22 ตุลาคม 2569<br>
+      ⚠️ เอกสารนี้จัดทำเพื่อบันทึกการวิเคราะห์ส่วนบุคคล ไม่ใช่คำแนะนำการลงทุนจากผู้ประกอบวิชาชีพหลักทรัพย์
+    </footer>
+  </div>
+</body>
+</html>
