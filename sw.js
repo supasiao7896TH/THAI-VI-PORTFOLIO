@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thai-vi-portfolio-v1.0.1';
+const CACHE_NAME = 'thai-vi-portfolio-v1.1.0';
 const CORE_ASSETS = [
   '/',
   '/index.html',

@@ -18,6 +18,7 @@
       --bg-amber-subtle: #FEF9EC;
       --bg-success-subtle: #ECFDF5;
       --bg-warning-subtle: #FFFBEB;
+      --bg-danger-subtle: #FEF2F2;
       --text-primary: #0F172A;
       --text-secondary: #334155;
       --text-muted: #475569;
@@ -26,6 +27,7 @@
       --ref-amber: #8A6410;
       --status-success: #15803D;
       --status-warning: #B45309;
+      --status-danger: #B91C1C;
       --border-line: #E2E8F0;
       --card-radius: 13px;
       --btn-radius: 999px;
@@ -118,7 +120,9 @@
     }
 
     .btn-pill:focus-visible,
-    .capital-input:focus-visible {
+    .capital-input:focus-visible,
+    .table-input:focus-visible,
+    .select-input:focus-visible {
       outline: 3px solid var(--brand-ink);
       outline-offset: 2px;
     }
@@ -162,19 +166,36 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .capital-input {
+    .capital-input,
+    .select-input {
       min-height: 44px;
-      padding: 0 16px;
+      padding: 0 14px;
       border-radius: 10px;
       border: 1px solid var(--border-line);
       font-family: inherit;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: var(--text-primary);
-      width: 190px;
+      background-color: var(--bg-surface);
+    }
+
+    .capital-input {
+      width: 180px;
+    }
+
+    .table-input {
+      min-height: 40px;
+      width: 120px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 1px solid #CBD5E1;
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-primary);
       background-color: var(--bg-surface);
     }
 
@@ -199,7 +220,7 @@
     }
 
     .kpi-value {
-      font-size: 24px;
+      font-size: 23px;
       font-weight: 700;
       color: var(--text-primary);
     }
@@ -245,6 +266,12 @@
       border: 1px solid #FDE68A;
     }
 
+    .badge-danger {
+      background-color: var(--bg-danger-subtle);
+      color: var(--status-danger);
+      border: 1px solid #FECACA;
+    }
+
     .badge-amber {
       background-color: var(--bg-amber-subtle);
       color: var(--ref-amber);
@@ -266,7 +293,7 @@
       text-align: left;
       padding: 12px 14px;
       border-bottom: 1px solid var(--border-line);
-      vertical-align: top;
+      vertical-align: middle;
     }
 
     th {
@@ -312,7 +339,7 @@
     <section class="card">
       <h1 class="hero-title">🏛️ แผนจัดพอร์ตหุ้นปันผลระยะยาว 5,000,000 บาท (Master VI Dividend Portfolio)</h1>
       <p class="hero-subtitle">
-        กระจายการลงทุนใน 3 อุตสาหกรรมเสาหลัก (พลังงาน 30% · ธนาคาร 35% · สุขภาพรับสังคมสูงวัย 35%) อ้างอิงงบการเงินจริง 56-1 ปี 2568 และแผน Entry Timing 3 ไม้
+        กระจายการลงทุนใน 3 อุตสาหกรรมเสาหลัก (พลังงาน 30% · ธนาคาร 35% · สุขภาพรับสังคมสูงวัย 35%) อ้างอิงงบการเงินจริง 56-1 ปี 2568 และราคาตลาดสดออนไลน์
       </p>
 
       <!-- Simulator Controls -->
@@ -327,7 +354,7 @@
         </div>
         <div class="input-wrap">
           <button type="button" id="modeTargetBtn" class="btn-pill" onclick="setMode('target')">🎯 โหมดสะสมครบ 3 ไม้ (Target Cost)</button>
-          <button type="button" id="modeCurrentBtn" class="btn-pill secondary" onclick="setMode('current')">⚡ โหมดราคาตลาดวันนี้ (Current Price)</button>
+          <button type="button" id="modeCurrentBtn" class="btn-pill secondary" onclick="setMode('current')">⚡ โหมดราคาตลาดสด (Live Price)</button>
         </div>
       </div>
 
@@ -356,10 +383,137 @@
       </div>
     </section>
 
+    <!-- NEW MODULE: My Actual Holdings & Cost Basis Tracker (Local-First) -->
+    <section class="card" id="actualPortfolioSection">
+      <div class="section-title">
+        <span>💼 บันทึกพอร์ตหุ้นจริงของพี่ A (My Actual Holdings &amp; Cost Basis Tracker)</span>
+        <span class="badge badge-success" id="saveStatusBadge">💾 บันทึกอัตโนมัติในเครื่อง (Local-First IndexedDB)</span>
+      </div>
+      <p style="font-size:14.5px; color:var(--text-secondary); margin-bottom:16px;">
+        กรอก <strong>จำนวนหุ้นที่ซื้อสะสมแล้วจริง</strong> และ <strong>ราคาต้นทุนเฉลี่ยจริง (บาท/หุ้น)</strong> จากพอร์ตหลักทรัพย์บัวหลวง ระบบจะคำนวณกำไร/ขาดทุนเทียบราคาตลาดสด, เงินปันผลรับจริง (Yield on Cost), และยอดเงินสดคงเหลือสำหรับรอช้อนไม้ถัดไปให้อัตโนมัติค่ะ
+      </p>
+
+      <div class="simulator-bar no-print" style="margin-bottom:16px;">
+        <div class="input-wrap">
+          <button type="button" class="btn-pill" onclick="saveActualHoldings(true)" aria-label="บันทึกพอร์ตจริง">💾 บันทึกพอร์ตจริง</button>
+          <button type="button" class="btn-pill secondary" onclick="fillSampleTranche1()" aria-label="เติมตัวอย่างการซื้อไม้ที่ 1">⚡ เติมตัวอย่างไม้ที่ 1 (BDMS)</button>
+          <button type="button" class="btn-pill secondary" onclick="clearActualHoldings()" aria-label="ล้างค่าพอร์ตจริงเป็นศูนย์">🧹 ล้างค่าเป็น 0</button>
+        </div>
+        <div class="input-wrap">
+          <button type="button" class="btn-pill secondary" onclick="exportActualHoldingsJson()" aria-label="ส่งออกไฟล์ JSON สำรองข้อมูล">📥 ส่งออก Backup (.json)</button>
+          <label class="btn-pill secondary" style="cursor:pointer;" aria-label="นำเข้าไฟล์ JSON สำรองข้อมูล">
+            📤 นำเข้า Backup (.json)
+            <input type="file" id="importJsonInput" accept=".json" style="display:none;" onchange="importActualHoldingsJson(event)" />
+          </label>
+        </div>
+      </div>
+
+      <!-- 4 KPI Cards for Actual Holdings -->
+      <div class="grid-4" style="margin-bottom:16px;">
+        <div class="kpi-box" style="border-left: 4px solid #1D4ED8;">
+          <div class="kpi-label">เงินต้นลงทุนจริงแล้ว / เงินสดรอช้อน</div>
+          <div class="kpi-value" id="actInvestedVal">0 บาท</div>
+          <div class="kpi-sub" id="actRemainingCash">เงินสดสำรองรอช้อน: 5,000,000 บาท (100%)</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #15803D;">
+          <div class="kpi-label">มูลค่าตลาดปัจจุบัน &amp; กำไร/ขาดทุน (P/L)</div>
+          <div class="kpi-value" id="actMarketVal">0 บาท</div>
+          <div class="kpi-sub" id="actUnrealizedPl">Unrealized P/L: 0 บาท (0.00%)</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #8A6410;">
+          <div class="kpi-label">เงินปันผลรับจริงต่อปี (จากหุ้นที่ถือจริง)</div>
+          <div class="kpi-value" id="actGrossDiv">0 บาท/ปี</div>
+          <div class="kpi-sub" id="actYieldOnCost">Yield on Cost: 0.00% | สุทธิ 0 บ./เดือน</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #15803D;">
+          <div class="kpi-label">ความคืบหน้าการสะสมหุ้นเข้าพอร์ต</div>
+          <div class="kpi-value" id="actProgressPct">0.0% ของแผน</div>
+          <div class="kpi-sub" id="actProgressSub">เทียบกับงบเป้าหมายรวม 5,000,000 บาท</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>หุ้น</th>
+              <th>จำนวนหุ้นที่ถือจริง (หุ้น)</th>
+              <th>ต้นทุนเฉลี่ยจริง (บาท/หุ้น)</th>
+              <th>เงินต้นที่ใช้ไป (บาท)</th>
+              <th>ราคาตลาดสด</th>
+              <th>กำไร/ขาดทุน (Unrealized P/L)</th>
+              <th>ปันผลรับจริง/ปี (Yield on Cost)</th>
+              <th>งบคงเหลือสำหรับไม้ถัดไป</th>
+            </tr>
+          </thead>
+          <tbody id="actualHoldingsBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- NEW MODULE: Dividend Tax Credit Calculator (Section 47 Bis) -->
+    <section class="card" id="taxCalculatorSection">
+      <div class="section-title">
+        <span>🧾 เครื่องคำนวณเครดิตภาษีเงินปันผล (มาตรา 47 ทวิ — ยื่นแบบ ภ.ง.ด.90)</span>
+        <span class="badge badge-amber" id="taxRecBadge">คำนวณเปรียบเทียบความคุ้มค่าการขอคืนภาษี</span>
+      </div>
+      <p style="font-size:14.5px; color:var(--text-secondary); margin-bottom:16px;">
+        หุ้น <code>PTT</code>, <code>BBL</code>, <code>KTB</code>, และ <code>BDMS</code> จ่ายปันผลจากกำไรที่เสียภาษีนิติบุคคลอัตรา <strong>20%</strong> (ได้เครดิตภาษีเงินปันผล $\frac{20}{80} = 25\%$) พี่ A สามารถเลือกฐานภาษีเงินได้บุคคลธรรมดาด้านล่างเพื่อดูว่ายื่นขอเครดิตภาษีแล้วจะได้เงินคืนเพิ่มอีกปีละกี่บาทค่ะ
+      </p>
+
+      <div class="simulator-bar no-print" style="margin-bottom:16px;">
+        <div class="input-wrap">
+          <label for="taxSourceSelect" style="font-weight:700; font-size:14px;">📊 คำนวณจากยอดปันผลของ:</label>
+          <select id="taxSourceSelect" class="select-input" onchange="renderTaxCalculator()" aria-label="เลือกแหล่งข้อมูลปันผล">
+            <option value="target">พอร์ตเป้าหมาย (Target Portfolio)</option>
+            <option value="actual">พอร์ตที่ถือจริง (My Actual Holdings)</option>
+          </select>
+        </div>
+        <div class="input-wrap">
+          <label for="taxBracketSelect" style="font-weight:700; font-size:14px;">🏛️ ฐานภาษีเงินได้บุคคลธรรมดาสูงสุดของพี่ A:</label>
+          <select id="taxBracketSelect" class="select-input" onchange="renderTaxCalculator()" aria-label="เลือกฐานภาษีเงินได้บุคคลธรรมดา">
+            <option value="0">0% (เงินได้สุทธิไม่เกิน 150,000 บ.)</option>
+            <option value="0.05">5% (150,001 – 300,000 บ.)</option>
+            <option value="0.10">10% (300,001 – 500,000 บ.)</option>
+            <option value="0.15" selected>15% (500,001 – 750,000 บ.)</option>
+            <option value="0.20">20% (750,001 – 1,000,000 บ.)</option>
+            <option value="0.25">25% (1,000,001 – 2,000,000 บ.)</option>
+            <option value="0.30">30% (2,000,001 – 5,000,000 บ.)</option>
+            <option value="0.35">35% (เกิน 5,000,000 บ.)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="kpi-box" style="border-left: 4px solid #1D4ED8;">
+          <div class="kpi-label">1. เงินปันผลรวมก่อนภาษี (Gross Dividend)</div>
+          <div class="kpi-value" id="taxGrossDiv">316,015 บาท</div>
+          <div class="kpi-sub" id="taxWht10">ถูกหักภาษี ณ ที่จ่าย 10% ไว้ = 31,602 บาท</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #8A6410;">
+          <div class="kpi-label">2. เครดิตภาษีเงินปันผล (มาตรา 47 ทวิ 25%)</div>
+          <div class="kpi-value" id="taxCreditAmt">+71,884 บาท</div>
+          <div class="kpi-sub">คำนวณจากปันผล PTT, BBL, KTB, BDMS (CIT 20%)</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #15803D;">
+          <div class="kpi-label">3. ผลต่างเงินคืนภาษีสุทธิ (ภ.ง.ด.90)</div>
+          <div class="kpi-value" id="taxNetRefund">+46,356 บาท/ปี</div>
+          <div class="kpi-sub" id="taxAdviceText">✅ คุ้มค่ามาก! แนะนำยื่นขอเครดิตภาษี ภ.ง.ด.90</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #15803D;">
+          <div class="kpi-label">4. รวมเงินสดสุทธิเข้ากระเป๋าจริงทั้งปี</div>
+          <div class="kpi-value" id="taxTotalPocket">330,769 บาท/ปี</div>
+          <div class="kpi-sub" id="taxMonthlyPocket">เฉลี่ยรับจริง 27,564 บาท/เดือน!</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Table 1: Portfolio Allocation & Dividend Simulation -->
     <section class="card">
       <div class="section-title">
-        <span>📊 1. ตารางจัดสรรวงเงิน จำนวนหุ้น และกระแสเงินสดปันผลรายตัว</span>
+        <span>📊 1. ตารางจำลองจัดสรรวงเงิน จำนวนหุ้น และกระแสเงินสดปันผลรายตัว</span>
         <span class="badge badge-amber" id="modeBadgeLabel">โหมดคำนวณ: สะสมครบ 3 ไม้ (Target Average Cost)</span>
       </div>
       <div class="table-wrap">
@@ -386,7 +540,7 @@
     <!-- Table 2: 3-Tranche Execution Plan -->
     <section class="card">
       <div class="section-title">
-        <span>🎯 2. แผนแบ่งไม้ซื้อจริง 3 ไม้ (Day-1 Execution vs ตั้งรอรับเมื่อย่อตัว)</span>
+        <span>🎯 2. แผนแบ่งไม้ซื้อจริง 3 ไม้ &amp; สัญญาณไฟจราจรเทียบราคาตลาดสด</span>
         <span class="badge badge-success" id="day1ActionBadge">สัปดาห์แรกใช้เงินสด 15% (750,000 บ.) + พักเงินรอช้อน 85% (4,250,000 บ.)</span>
       </div>
       <div class="table-wrap">
@@ -398,7 +552,7 @@
               <th>🟢 ไม้ที่ 1 (30%) — โซนราคา &amp; เงื่อนไข</th>
               <th>🔵 ไม้ที่ 2 (40%) — โซนราคา &amp; เงื่อนไข</th>
               <th>🟣 ไม้ที่ 3 (30%) — โซนราคา &amp; เงื่อนไข</th>
-              <th>สถานะปัจจุบัน (22 ต.ค. 69)</th>
+              <th>สัญญาณไฟจราจร (เทียบราคาสด)</th>
             </tr>
           </thead>
           <tbody id="trancheBody">
@@ -445,10 +599,11 @@
         fairValue: 40.66,
         totalDps: 2.10,
         normalDps: 1.90,
+        citRate: 0.20,
         t1Zone: '31.00 – 32.50 บาท (รอรับแนวรับแรก)',
         t2Zone: '29.00 – 30.50 บาท (แนวรับฐาน 1W)',
         t3Zone: '27.00 – 28.50 บาท (โซน Deep Value)',
-        statusText: '🟡 รอตั้งรับไม้แรก 31.00–32.50',
+        statusText: '🟡 รอตั้งรับไม้แรก ≤ 32.50',
         statusClass: 'badge-warning',
         buyNow: false
       },
@@ -461,10 +616,11 @@
         fairValue: 214.08,
         totalDps: 10.00,
         normalDps: 10.00,
-        t1Zone: '158.00 – 161.50 บาท (เข้าซื้อได้ทันที!)',
+        citRate: 0.20,
+        t1Zone: '158.00 – 162.00 บาท (โซนสะสมไม้แรก)',
         t2Zone: '148.00 – 155.00 บาท (แนวรับฐาน 1W)',
         t3Zone: '138.00 – 145.00 บาท (ฐานใหญ่ 1M)',
-        statusText: '🟢 สะสมไม้ 1 ได้ทันที (P/BV 0.53x)',
+        statusText: '🟢 สะสมไม้ 1 ได้เมื่อ ≤ 162.00',
         statusClass: 'badge-success',
         buyNow: true
       },
@@ -477,10 +633,11 @@
         fairValue: 34.33,
         totalDps: 2.07,
         normalDps: 1.47,
+        citRate: 0.20,
         t1Zone: '29.50 – 31.00 บาท (รอ RSI คลายตัว)',
         t2Zone: '27.00 – 28.50 บาท (Target Buy Zone)',
         t3Zone: '24.50 – 26.00 บาท (ฐาน Breakout เดิม)',
-        statusText: '🟡 รอย่อตัว (RSI 1M Overbought)',
+        statusText: '🟡 รอย่อตัว ≤ 31.00',
         statusClass: 'badge-warning',
         buyNow: false
       },
@@ -493,10 +650,11 @@
         fairValue: 24.13,
         totalDps: 1.00,
         normalDps: 0.75,
+        citRate: 0.20,
         t1Zone: '19.00 – 19.50 บาท (เข้าซื้อได้ทันที!)',
         t2Zone: '17.50 – 18.75 บาท (Yield ปกติครบ 4%)',
         t3Zone: 'ทะลุ 20.60 บาท (หรือรับลึก 17.40)',
-        statusText: '🟢 สะสมไม้ 1 ได้ทันที (ฐาน 10 ปี)',
+        statusText: '🟢 เข้าโซนไม้ 1 (≤ 19.50) — เคาะซื้อได้!',
         statusClass: 'badge-success',
         buyNow: true
       },
@@ -509,25 +667,141 @@
         fairValue: 34.20,
         totalDps: 1.60,
         normalDps: 1.60,
+        citRate: 0.0,
         t1Zone: '29.50 – 31.50 บาท (ต่ำกว่า Base FV)',
         t2Zone: '26.50 – 28.50 บาท (Target Buy Zone)',
         t3Zone: '24.00 – 26.00 บาท (Graham Floor)',
-        statusText: '🟡 รอย่อตัวจาก Double Top',
+        statusText: '🟡 รอย่อตัว ≤ 31.50',
         statusClass: 'badge-warning',
         buyNow: false
       }
     ];
 
+    const STORAGE_KEY = 'SUPASIT_VI_ACTUAL_HOLDINGS_V1';
     let currentMode = 'target';
+    let actualHoldings = {
+      PTT:  { shares: 0, avgCost: 30.50 },
+      BBL:  { shares: 0, avgCost: 161.50 },
+      KTB:  { shares: 0, avgCost: 29.50 },
+      BDMS: { shares: 0, avgCost: 19.30 },
+      MEGA: { shares: 0, avgCost: 30.00 }
+    };
 
     function fmtNum(n) {
       return Math.round(n).toLocaleString('th-TH');
+    }
+
+    // IndexedDB + LocalStorage Persistence Engine
+    function loadActualHoldings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          Object.keys(actualHoldings).forEach((k) => {
+            if (parsed[k]) {
+              actualHoldings[k].shares = Math.max(0, Number(parsed[k].shares) || 0);
+              actualHoldings[k].avgCost = Math.max(0, Number(parsed[k].avgCost) || actualHoldings[k].avgCost);
+            }
+          });
+        }
+      } catch (_e) {}
+    }
+
+    function saveActualHoldings(showFeedback) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(actualHoldings));
+        if ('indexedDB' in window) {
+          const req = indexedDB.open('ThaiViPortfolioDB', 1);
+          req.onupgradeneeded = (ev) => {
+            const db = ev.target.result;
+            if (!db.objectStoreNames.contains('holdings')) {
+              db.createObjectStore('holdings');
+            }
+          };
+          req.onsuccess = (ev) => {
+            const db = ev.target.result;
+            const tx = db.transaction('holdings', 'readwrite');
+            tx.objectStore('holdings').put(actualHoldings, 'current');
+          };
+        }
+        if (showFeedback) {
+          const badge = document.getElementById('saveStatusBadge');
+          if (badge) {
+            badge.textContent = '✅ บันทึกข้อมูลพอร์ตจริงเรียบร้อยแล้ว (' + new Date().toLocaleTimeString('th-TH') + ')';
+          }
+        }
+      } catch (_e) {}
+    }
+
+    function fillSampleTranche1() {
+      const rawCap = parseFloat(document.getElementById('capitalInput').value);
+      const totalCapital = (!isNaN(rawCap) && rawCap >= 100000) ? rawCap : 5000000;
+      const bdmsBudgetT1 = totalCapital * 0.25 * 0.30;
+      const bdmsLivePrice = PORTFOLIO_STOCKS.find((s) => s.code === 'BDMS')?.currentPrice || 19.30;
+      actualHoldings.BDMS.shares = Math.floor((bdmsBudgetT1 / bdmsLivePrice) / 100) * 100;
+      actualHoldings.BDMS.avgCost = bdmsLivePrice;
+      saveActualHoldings(true);
+      renderActualPortfolio();
+      renderTaxCalculator();
+    }
+
+    function clearActualHoldings() {
+      Object.keys(actualHoldings).forEach((k) => {
+        actualHoldings[k].shares = 0;
+      });
+      saveActualHoldings(true);
+      renderActualPortfolio();
+      renderTaxCalculator();
+    }
+
+    function exportActualHoldingsJson() {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        totalCapital: parseFloat(document.getElementById('capitalInput').value) || 5000000,
+        holdings: actualHoldings
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'thai-vi-portfolio-backup.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importActualHoldingsJson(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.totalCapital) {
+            document.getElementById('capitalInput').value = data.totalCapital;
+          }
+          if (data.holdings) {
+            Object.keys(actualHoldings).forEach((k) => {
+              if (data.holdings[k]) {
+                actualHoldings[k].shares = Math.max(0, Number(data.holdings[k].shares) || 0);
+                actualHoldings[k].avgCost = Math.max(0, Number(data.holdings[k].avgCost) || 0);
+              }
+            });
+          }
+          saveActualHoldings(true);
+          renderPortfolio();
+          renderActualPortfolio();
+          renderTaxCalculator();
+        } catch (_err) {}
+      };
+      reader.readAsText(file);
     }
 
     function setCapital(amount) {
       const input = document.getElementById('capitalInput');
       input.value = amount;
       renderPortfolio();
+      renderActualPortfolio();
+      renderTaxCalculator();
     }
 
     function setMode(mode) {
@@ -543,9 +817,10 @@
       } else {
         targetBtn.className = 'btn-pill secondary';
         currentBtn.className = 'btn-pill';
-        badge.textContent = 'โหมดคำนวณ: ซื้อที่ราคาตลาดปัจจุบัน (Current Market Price)';
+        badge.textContent = 'โหมดคำนวณ: ซื้อที่ราคาตลาดสด (Live Market Price)';
       }
       renderPortfolio();
+      renderTaxCalculator();
     }
 
     function createCell(text, isStrong) {
@@ -558,6 +833,173 @@
         td.textContent = text;
       }
       return td;
+    }
+
+    function renderActualPortfolio() {
+      const rawCap = parseFloat(document.getElementById('capitalInput').value);
+      const totalCapital = (!isNaN(rawCap) && rawCap >= 100000) ? rawCap : 5000000;
+      const tbody = document.getElementById('actualHoldingsBody');
+      if (!tbody) return;
+      while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+
+      let totalInvested = 0;
+      let totalMarketVal = 0;
+      let totalActualDiv = 0;
+
+      PORTFOLIO_STOCKS.forEach((st) => {
+        const h = actualHoldings[st.code] || { shares: 0, avgCost: st.targetCost };
+        const targetBudget = totalCapital * st.weight;
+        const invested = h.shares * h.avgCost;
+        const mktVal = h.shares * st.currentPrice;
+        const pl = mktVal - invested;
+        const plPct = invested > 0 ? ((pl / invested) * 100).toFixed(2) : '0.00';
+        const annualDiv = h.shares * st.totalDps;
+        const yoc = invested > 0 ? ((annualDiv / invested) * 100).toFixed(2) : '0.00';
+        const remainBudget = Math.max(0, targetBudget - invested);
+
+        totalInvested += invested;
+        totalMarketVal += mktVal;
+        totalActualDiv += annualDiv;
+
+        const tr = document.createElement('tr');
+        tr.appendChild(createCell(st.name, true));
+
+        // Shares Input
+        const tdShares = document.createElement('td');
+        const inpShares = document.createElement('input');
+        inpShares.type = 'number';
+        inpShares.min = '0';
+        inpShares.step = '100';
+        inpShares.className = 'table-input';
+        inpShares.setAttribute('aria-label', 'จำนวนหุ้นจริงของ ' + st.code);
+        inpShares.value = h.shares;
+        inpShares.addEventListener('change', (ev) => {
+          actualHoldings[st.code].shares = Math.max(0, Number(ev.target.value) || 0);
+          saveActualHoldings(true);
+          renderActualPortfolio();
+          renderTaxCalculator();
+        });
+        tdShares.appendChild(inpShares);
+        tr.appendChild(tdShares);
+
+        // Avg Cost Input
+        const tdCost = document.createElement('td');
+        const inpCost = document.createElement('input');
+        inpCost.type = 'number';
+        inpCost.min = '0';
+        inpCost.step = '0.05';
+        inpCost.className = 'table-input';
+        inpCost.setAttribute('aria-label', 'ต้นทุนเฉลี่ยจริงของ ' + st.code);
+        inpCost.value = h.avgCost;
+        inpCost.addEventListener('change', (ev) => {
+          actualHoldings[st.code].avgCost = Math.max(0, Number(ev.target.value) || 0);
+          saveActualHoldings(true);
+          renderActualPortfolio();
+          renderTaxCalculator();
+        });
+        tdCost.appendChild(inpCost);
+        tr.appendChild(tdCost);
+
+        tr.appendChild(createCell(fmtNum(invested) + ' บ.', false));
+        tr.appendChild(createCell(st.currentPrice.toFixed(2) + ' บ.', true));
+
+        const tdPl = document.createElement('td');
+        const plSpan = document.createElement('strong');
+        plSpan.style.color = pl >= 0 ? '#15803D' : '#B91C1C';
+        const sign = pl > 0 ? '+' : '';
+        plSpan.textContent = sign + fmtNum(pl) + ' บ. (' + sign + plPct + '%)';
+        tdPl.appendChild(plSpan);
+        tr.appendChild(tdPl);
+
+        tr.appendChild(createCell(fmtNum(annualDiv) + ' บ. (' + yoc + '%)', true));
+        tr.appendChild(createCell(fmtNum(remainBudget) + ' บ.', false));
+        tbody.appendChild(tr);
+      });
+
+      const remainTotalCash = Math.max(0, totalCapital - totalInvested);
+      const remainPct = ((remainTotalCash / totalCapital) * 100).toFixed(1);
+      const totalPl = totalMarketVal - totalInvested;
+      const totalPlPct = totalInvested > 0 ? ((totalPl / totalInvested) * 100).toFixed(2) : '0.00';
+      const totalYoc = totalInvested > 0 ? ((totalActualDiv / totalInvested) * 100).toFixed(2) : '0.00';
+      const progressPct = Math.min(100, (totalInvested / totalCapital) * 100).toFixed(1);
+
+      document.getElementById('actInvestedVal').textContent = fmtNum(totalInvested) + ' บาท';
+      document.getElementById('actRemainingCash').textContent = 'เงินสดรอช้อน: ' + fmtNum(remainTotalCash) + ' บ. (' + remainPct + '%)';
+      document.getElementById('actMarketVal').textContent = fmtNum(totalMarketVal) + ' บาท';
+
+      const plEl = document.getElementById('actUnrealizedPl');
+      const plSign = totalPl > 0 ? '+' : '';
+      plEl.textContent = 'Unrealized P/L: ' + plSign + fmtNum(totalPl) + ' บ. (' + plSign + totalPlPct + '%)';
+      plEl.style.color = totalPl >= 0 ? '#15803D' : '#B91C1C';
+
+      document.getElementById('actGrossDiv').textContent = fmtNum(totalActualDiv) + ' บาท/ปี';
+      document.getElementById('actYieldOnCost').textContent = 'Yield on Cost: ' + totalYoc + '% | สุทธิ ' + fmtNum((totalActualDiv * 0.9) / 12) + ' บ./เดือน';
+      document.getElementById('actProgressPct').textContent = progressPct + '% ของแผน';
+      document.getElementById('actProgressSub').textContent = 'เทียบกับงบเป้าหมายรวม ' + fmtNum(totalCapital) + ' บาท';
+    }
+
+    function renderTaxCalculator() {
+      const rawCap = parseFloat(document.getElementById('capitalInput').value);
+      const totalCapital = (!isNaN(rawCap) && rawCap >= 100000) ? rawCap : 5000000;
+      const sourceMode = document.getElementById('taxSourceSelect')?.value || 'target';
+      const marginalRate = parseFloat(document.getElementById('taxBracketSelect')?.value || '0.15');
+
+      let totalGrossDiv = 0;
+      let creditEligibleDiv = 0;
+
+      PORTFOLIO_STOCKS.forEach((st) => {
+        let shares = 0;
+        if (sourceMode === 'actual') {
+          shares = actualHoldings[st.code]?.shares || 0;
+        } else {
+          const budget = totalCapital * st.weight;
+          const priceUsed = (currentMode === 'target') ? st.targetCost : st.currentPrice;
+          shares = Math.floor((budget / priceUsed) / 100) * 100;
+        }
+        const div = shares * st.totalDps;
+        totalGrossDiv += div;
+        if (st.citRate === 0.20) {
+          creditEligibleDiv += div;
+        }
+      });
+
+      const wht10 = totalGrossDiv * 0.10;
+      const taxCredit25 = creditEligibleDiv * (0.20 / 0.80); // 25% of dividend
+      const assessableIncome = totalGrossDiv + taxCredit25;
+      const personalTaxLiability = assessableIncome * marginalRate;
+      // Net refund when filing ภ.ง.ด.90 vs letting 10% WHT be final:
+      // Refund = (WHT 10% + Tax Credit 25%) - Personal Tax Liability
+      const netTaxRefund = (wht10 + taxCredit25) - personalTaxLiability;
+      const bestNetCash = netTaxRefund > 0
+        ? (totalGrossDiv - wht10 + netTaxRefund)
+        : (totalGrossDiv - wht10);
+
+      document.getElementById('taxGrossDiv').textContent = fmtNum(totalGrossDiv) + ' บาท';
+      document.getElementById('taxWht10').textContent = 'ถูกหักภาษี ณ ที่จ่าย 10% ไว้ = ' + fmtNum(wht10) + ' บาท';
+      document.getElementById('taxCreditAmt').textContent = '+' + fmtNum(taxCredit25) + ' บาท';
+
+      const refundEl = document.getElementById('taxNetRefund');
+      const adviceEl = document.getElementById('taxAdviceText');
+      const badgeEl = document.getElementById('taxRecBadge');
+
+      if (netTaxRefund >= 0) {
+        refundEl.textContent = '+' + fmtNum(netTaxRefund) + ' บาท/ปี';
+        refundEl.style.color = '#15803D';
+        adviceEl.textContent = '✅ คุ้มค่ามาก! แนะนำยื่นขอเครดิตภาษี ภ.ง.ด.90';
+        adviceEl.style.color = '#15803D';
+        badgeEl.className = 'badge badge-success';
+        badgeEl.textContent = '✅ แนะนำยื่น ภ.ง.ด.90 รับเงินคืนภาษีเพิ่ม +' + fmtNum(netTaxRefund) + ' บ./ปี';
+      } else {
+        refundEl.textContent = fmtNum(netTaxRefund) + ' บาท/ปี';
+        refundEl.style.color = '#B91C1C';
+        adviceEl.textContent = '⚠️ ฐานภาษีสูง: แนะนำใช้สิทธิ์ Final Tax 10% (ไม่ต้องยื่นรวมปลายปี)';
+        adviceEl.style.color = '#B45309';
+        badgeEl.className = 'badge badge-warning';
+        badgeEl.textContent = '⚠️ แนะนำเลือกหัก ณ ที่จ่าย 10% จบ (Final Tax)';
+      }
+
+      document.getElementById('taxTotalPocket').textContent = fmtNum(bestNetCash) + ' บาท/ปี';
+      document.getElementById('taxMonthlyPocket').textContent = 'เฉลี่ยรับจริงเข้ากระเป๋า ' + fmtNum(bestNetCash / 12) + ' บาท/เดือน!';
     }
 
     function renderPortfolio() {
@@ -594,6 +1036,14 @@
         const t1Amt = budget * 0.30;
         const t2Amt = budget * 0.40;
         const t3Amt = budget * 0.30;
+
+        if (typeof window.evaluateViActionSignal === 'function') {
+          const sig = window.evaluateViActionSignal(st.code, st.currentPrice);
+          st.statusText = sig.label;
+          st.statusClass = sig.tier.startsWith('buy') ? 'badge-success' : (sig.tier === 'wait' ? 'badge-warning' : 'badge-danger');
+          st.buyNow = sig.tier.startsWith('buy');
+        }
+
         if (st.buyNow) {
           day1BuyNow += t1Amt;
         }
@@ -645,8 +1095,9 @@
       document.getElementById('kpiCapGain').textContent = 'กำไรส่วนต่างราคา +' + fmtNum(capGain) + ' บาท (+' + capGainPct + '%)';
 
       const reserveCash = totalCapital - day1BuyNow;
+      const buyPct = Math.round((day1BuyNow / totalCapital) * 100);
       document.getElementById('day1ActionBadge').textContent =
-        'สัปดาห์แรกเคาะซื้อทันที 15% (' + fmtNum(day1BuyNow) + ' บ.) + พักเงินรอช้อน 85% (' + fmtNum(reserveCash) + ' บ.)';
+        'เข้าโซนเคาะซื้อทันที ' + buyPct + '% (' + fmtNum(day1BuyNow) + ' บ.) + พักเงินรอช้อน ' + (100 - buyPct) + '% (' + fmtNum(reserveCash) + ' บ.)';
 
       // Snowball 10-year simulation
       const baseYieldRate = sumGrossDiv / totalCapital;
@@ -675,10 +1126,19 @@
 
     window.PORTFOLIO_STOCKS = PORTFOLIO_STOCKS;
     window.renderPortfolio = renderPortfolio;
-    document.getElementById('capitalInput').addEventListener('input', renderPortfolio);
+    window.renderActualPortfolio = renderActualPortfolio;
+    window.renderTaxCalculator = renderTaxCalculator;
+
+    loadActualHoldings();
+    document.getElementById('capitalInput').addEventListener('input', () => {
+      renderPortfolio();
+      renderActualPortfolio();
+      renderTaxCalculator();
+    });
     renderPortfolio();
+    renderActualPortfolio();
+    renderTaxCalculator();
   </script>
   <script src="../pwa-live.js" defer></script>
 </body>
 </html>
-
