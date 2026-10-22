@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายงานวิเคราะห์เปรียบเทียบหุ้นธนาคาร BBL vs KTB — Supasit.A Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-page: #F7F9FC;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F1F5F9;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #475569;
+      --brand-blue: #1D4ED8;
+      --brand-blue-bg: #EFF6FF;
+      --ref-amber: #8A6410;
+      --ref-amber-bg: #FEF9C3;
+      --status-green: #15803D;
+      --status-green-bg: #DCFCE7;
+      --status-red: #B91C1C;
+      --status-red-bg: #FEE2E2;
+      --border-color: #E2E8F0;
+      --card-radius: 13px;
+      --pill-radius: 999px;
+      --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.65;
+      padding: 24px 16px 64px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    header.report-header {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-subtle);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .brand-tag {
+      display: inline-block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--ref-amber);
+      background-color: var(--ref-amber-bg);
+      padding: 4px 12px;
+      border-radius: var(--card-radius);
+      margin-bottom: 10px;
+      border: 1px solid #FDE047;
+    }
+
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 20px;
+      background-color: var(--brand-blue);
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid var(--brand-blue);
+      border-radius: var(--pill-radius);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-pill:hover {
+      background-color: #1E40AF;
+    }
+
+    .btn-pill.secondary {
+      background-color: var(--bg-surface);
+      color: var(--brand-blue);
+    }
+
+    .btn-pill.secondary:hover {
+      background-color: var(--brand-blue-bg);
+    }
+
+    .btn-pill:focus-visible {
+      outline: 3px solid var(--brand-blue);
+      outline-offset: 2px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-subtle);
+      padding: 22px 24px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-subtle);
+      padding: 18px 20px;
+    }
+
+    .kpi-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .kpi-value {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .kpi-note {
+      font-size: 0.825rem;
+      color: var(--text-secondary);
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--card-radius);
+    }
+
+    .badge-green {
+      color: var(--status-green);
+      background-color: var(--status-green-bg);
+    }
+
+    .badge-amber {
+      color: var(--ref-amber);
+      background-color: var(--ref-amber-bg);
+    }
+
+    .badge-red {
+      color: var(--status-red);
+      background-color: var(--status-red-bg);
+    }
+
+    .badge-blue {
+      color: var(--brand-blue);
+      background-color: var(--brand-blue-bg);
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 18px 0 10px;
+    }
+
+    p, li {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    ul, ol {
+      padding-left: 22px;
+      margin-bottom: 12px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin: 12px 0 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #FAFCFF;
+    }
+
+    .callout {
+      background-color: var(--ref-amber-bg);
+      border: 1px solid #FDE047;
+      border-radius: var(--card-radius);
+      padding: 14px 18px;
+      margin-top: 14px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .callout-blue {
+      background-color: var(--brand-blue-bg);
+      border: 1px solid #BFDBFE;
+      border-radius: var(--card-radius);
+      padding: 14px 18px;
+      margin-top: 14px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+      margin-top: 14px;
+    }
+
+    .chart-box {
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      padding: 14px;
+      background-color: var(--bg-page);
+    }
+
+    .chart-box img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 32px;
+    }
+
+    @media print {
+      body {
+        background-color: #FFFFFF;
+        padding: 0;
+      }
+      .action-bar {
+        display: none;
+      }
+      .card, .kpi-card, header.report-header {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="report-header">
+      <div>
+        <span class="brand-tag">A-Class WebCraft | Code • Share • Inspire | by Supasit.A</span>
+        <h1>🏦 รายงานวิเคราะห์หุ้นธนาคาร: BBL vs KTB (VI &amp; Entry Timing)</h1>
+        <p class="subtitle">อ้างอิงงบการเงินปี 2568 (แบบ 56-1 One Report) และกราฟเทคนิครายเดือน (TF 1M) ณ วันที่ 22 ตุลาคม 2569</p>
+      </div>
+      <div class="action-bar">
+        <a href="./PTT_VI_Report.html" class="btn-pill secondary" aria-label="เปิดรายงานวิเคราะห์หุ้น PTT">📊 ดูรายงาน PTT</a>
+        <button type="button" class="btn-pill" onclick="window.print()" aria-label="พิมพ์รายงานหรือบันทึกเป็นไฟล์ PDF">🖨️ พิมพ์ / บันทึกเป็น PDF</button>
+      </div>
+    </header>
+
+    <section class="kpi-grid" aria-label="ตัวชี้วัดสำคัญเปรียบเทียบ BBL และ KTB">
+      <div class="kpi-card">
+        <div class="kpi-label">🏆 BBL (ราคา 181.00 บาท)</div>
+        <div class="kpi-value">27 / 30 คะแนน</div>
+        <div class="kpi-note"><span class="badge badge-green">Strong Buy · ทยอยสะสมไม้แรก</span> P/E 7.51x · P/BV 0.60x</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">🦅 KTB (ราคา 43.25 บาท)</div>
+        <div class="kpi-value">26 / 30 คะแนน</div>
+        <div class="kpi-note"><span class="badge badge-amber">Wait &amp; See · รอย่อตัว</span> P/E 12.54x · P/BV 1.30x (Overbought)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">💰 BBL Fair Value &amp; Yield</div>
+        <div class="kpi-value">182.19 – 237.59 ฿</div>
+        <div class="kpi-note"><span class="badge badge-green">Gross Yield 5.52%</span> (DPS 10.00฿ · Payout 41.5%)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">💰 KTB Fair Value &amp; Yield</div>
+        <div class="kpi-value">30.71 – 35.72 ฿</div>
+        <div class="kpi-note"><span class="badge badge-blue">Yield ปกติ 4.79%</span> (DPS ปกติ 2.07฿ / รวมพิเศษ 2.67฿)</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>🎯 1. บทสรุปเปรียบเทียบหมัดต่อหมัด (Head-to-Head Verdict)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ตัวชี้วัดสำคัญ (งบปี 2568 + ราคาตลาด 22/10/2026)</th>
+              <th>🏦 BBL (181.00 บาท)</th>
+              <th>🦅 KTB (43.25 บาท)</th>
+              <th>📌 บทสรุปเชิงกลยุทธ์สำหรับพอร์ตพี่ A</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>VI Scorecard รวมสุทธิ (/30)</strong></td>
+              <td><span class="badge badge-green">27 / 30 (Strong Buy)</span></td>
+              <td><span class="badge badge-amber">26 / 30 (Watch / รอย่อ)</span></td>
+              <td><strong>BBL ชนะด้วยคะแนนหมวด Valuation (4/4 vs 0/4)</strong></td>
+            </tr>
+            <tr>
+              <td><strong>กำไรสุทธิปี 2568 (Net Profit)</strong></td>
+              <td>46,007 ล้านบาท (+1.8% YoY)</td>
+              <td><strong>48,229 ล้านบาท (+4.5% YoY)</strong></td>
+              <td>KTB กำไรสุทธิแซง BBL ได้จาก Cost-to-Income ที่ต่ำเพียง 40.3%</td>
+            </tr>
+            <tr>
+              <td><strong>EPS และ BVPS ปี 2568</strong></td>
+              <td>EPS 24.10฿ · <strong>BVPS 300.67฿</strong></td>
+              <td>EPS 3.45฿ · BVPS 33.20฿</td>
+              <td>BBL มีฐานสินทรัพย์สุทธิต่อหุ้นแข็งแกร่งมาก</td>
+            </tr>
+            <tr>
+              <td><strong>P/E และ P/BV ณ ราคาปัจจุบัน</strong></td>
+              <td><strong>P/E 7.51x · P/BV 0.60x</strong> ✅</td>
+              <td>P/E 12.54x · P/BV 1.30x ⚠️</td>
+              <td><strong>BBL ซื้อได้ในราคาลด 40% จาก Book Value</strong> ส่วน KTB แพงกว่า Book 30%</td>
+            </tr>
+            <tr>
+              <td><strong>เงินปันผลปี 2568 (DPS) &amp; Payout</strong></td>
+              <td><strong>10.00 บาท</strong> (Payout 41.5%)</td>
+              <td>ปกติ 2.070฿ / รวมพิเศษ 2.670฿ (Payout 60% / 77.4%)</td>
+              <td>BBL จ่ายจาก Payout แค่ 41.5% มีรูมขึ้นปันผลต่อได้อีกมาก</td>
+            </tr>
+            <tr>
+              <td><strong>Gross / Net Dividend Yield (หลังภาษี 10%)</strong></td>
+              <td><strong>5.52% / 4.97%</strong> ✅</td>
+              <td>ปกติ 4.79% / 4.31% (รวมพิเศษ 6.17% / 5.56%)</td>
+              <td>ถ้านับปันผลปกติที่ยั่งยืน <strong>BBL ให้ Yield สูงกว่าชัดเจน</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Conservative / Base Case Fair Value</strong></td>
+              <td><strong>182.19฿ / 237.59฿</strong> (MoS +23.82%)</td>
+              <td><strong>30.71฿ / 35.72฿</strong> (Overvalued -21.1%)</td>
+              <td>BBL อยู่ในโซนคุ้มค่า ส่วน KTB ราคาวิ่งนำพื้นฐานไปล่วงหน้าแล้ว</td>
+            </tr>
+            <tr>
+              <td><strong>สัญญาณเทคนิค (TF 1M)</strong></td>
+              <td><strong>Healthy Throwback</strong> (RSI = 59.36)</td>
+              <td><strong>Parabolic Overbought</strong> (RSI = 77.00)</td>
+              <td><strong>ทยอยสะสม BBL โซน 172–181฿ · รอ KTB ย่อลงโซน 33.00–35.50฿</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📊 2. เปรียบเทียบงบการเงินและอัตราส่วนสำคัญ ปี 2568 (อ้างอิง 56-1 One Report)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>รายการสำคัญ (งบการเงินรวม)</th>
+              <th>🏦 BBL ปี 2568</th>
+              <th>🏦 BBL ปี 2567</th>
+              <th>🦅 KTB ปี 2568</th>
+              <th>🦅 KTB ปี 2567</th>
+              <th>วิเคราะห์เปรียบเทียบ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>สินทรัพย์รวม (Total Assets)</strong></td>
+              <td><strong>4,606,342 ล้าน฿</strong></td>
+              <td>4,551,379 ล้าน฿</td>
+              <td><strong>3,933,319 ล้าน฿</strong></td>
+              <td>3,739,144 ล้าน฿</td>
+              <td>BBL เป็นธนาคารที่มีขนาดสินทรัพย์ใหญ่ที่สุด (+17.1% เหนือ KTB)</td>
+            </tr>
+            <tr>
+              <td><strong>เงินให้สินเชื่อรวม (Total Loans)</strong></td>
+              <td><strong>2,608,286 ล้าน฿</strong> (-3.2%)</td>
+              <td>2,693,301 ล้าน฿</td>
+              <td><strong>2,711,171 ล้าน฿</strong> (+0.5%)</td>
+              <td>2,698,818 ล้าน฿</td>
+              <td>KTB เน้นสินเชื่อภาครัฐ/ข้าราชการ · BBL เน้นสินเชื่อ Corporate &amp; ต่างประเทศ</td>
+            </tr>
+            <tr>
+              <td><strong>รายได้ดอกเบี้ยสุทธิ (NII) &amp; NIM</strong></td>
+              <td><strong>123,630 ล้าน฿</strong> (NIM 2.75%)</td>
+              <td>133,900 ล้าน฿ (NIM 3.06%)</td>
+              <td><strong>105,781 ล้าน฿</strong> (NIM 2.82%)</td>
+              <td>119,116 ล้าน฿ (NIM 3.29%)</td>
+              <td>NII ลดลงตามดอกเบี้ยขาลง แต่ KTB รักษา NIM ได้ดีกว่าเล็กน้อย</td>
+            </tr>
+            <tr>
+              <td><strong>รายได้ที่มิใช่ดอกเบี้ย (Non-NII)</strong></td>
+              <td><strong>54,868 ล้าน฿</strong> (+30.9%)</td>
+              <td>41,923 ล้าน฿</td>
+              <td><strong>54,847 ล้าน฿</strong> (+29.7%)</td>
+              <td>42,272 ล้าน฿</td>
+              <td>เติบโตโดดเด่นระดับ +30% ทั้งคู่ ช่วยชดเชยดอกเบี้ยขาลงได้หมด</td>
+            </tr>
+            <tr>
+              <td><strong>Cost-to-Income Ratio</strong></td>
+              <td><strong>48.4%</strong></td>
+              <td>48.0%</td>
+              <td><strong>40.3%</strong> ✅</td>
+              <td>42.6%</td>
+              <td><strong>KTB คุมต้นทุนเก่งที่สุดในกลุ่มธนาคารใหญ่</strong> จาก Ecosystem แอปเป๋าตัง</td>
+            </tr>
+            <tr>
+              <td><strong>สำรองหนี้สูญ (ECL)</strong></td>
+              <td><strong>36,147 ล้าน฿</strong></td>
+              <td>34,838 ล้าน฿</td>
+              <td><strong>30,760 ล้าน฿</strong></td>
+              <td>31,070 ล้าน฿</td>
+              <td>BBL ยังคงตั้งสำรองเข้มงวดตามสไตล์อนุรักษนิยม</td>
+            </tr>
+            <tr>
+              <td><strong>กำไรสุทธิ (Net Profit)</strong></td>
+              <td><strong>46,007 ล้าน฿</strong> (+1.8%)</td>
+              <td>45,211 ล้าน฿</td>
+              <td><strong>48,229 ล้าน฿</strong> (+4.5%)</td>
+              <td>46,165 ล้าน฿</td>
+              <td>ทำกำไรสุทธิสูงสุดเป็นประวัติการณ์ต่อเนื่องทั้งคู่</td>
+            </tr>
+            <tr>
+              <td><strong>ROE / ROA</strong></td>
+              <td><strong>8.07% / 1.00%</strong></td>
+              <td>8.33% / 1.00%</td>
+              <td><strong>10.67% / 1.26%</strong> ✅</td>
+              <td>10.74% / 1.25%</td>
+              <td>KTB ชนะด้านประสิทธิภาพการทำกำไรต่อส่วนของผู้ถือหุ้น (ROE &gt; 10%)</td>
+            </tr>
+            <tr>
+              <td><strong>NPL Ratio / Coverage Ratio</strong></td>
+              <td><strong>3.00% / 324.1%</strong> ✅</td>
+              <td>2.70% / 334.3%</td>
+              <td><strong>2.90% / 203.6%</strong></td>
+              <td>2.99% / 188.6%</td>
+              <td><strong>BBL มี Coverage Ratio 324.1% สูงที่สุดในระบบธนาคารไทย</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Tier 1 / CAR (เงินกองทุนรวม)</strong></td>
+              <td><strong>17.22% / 21.78%</strong></td>
+              <td>17.0% / 20.4%</td>
+              <td><strong>20.18% / 22.12%</strong></td>
+              <td>18.8% / 20.8%</td>
+              <td>เงินกองทุนแข็งแกร่งระดับ 21%–22% ทั้งคู่</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>🎯 3. การประเมินมูลค่า 4 วิธี (4-Method Valuation) และประวัติปันผล 5 ปี</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>วิธีประเมินมูลค่า (vi-analysis §22.4)</th>
+              <th>สมมติฐานหลัก</th>
+              <th>🏦 มูลค่าเหมาะสม BBL</th>
+              <th>🦅 มูลค่าเหมาะสม KTB</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. DCF / Sustainable Equity CF</strong></td>
+              <td>Justified P/BV (BBL = 0.65x BV จาก ROE 8.1%; KTB = 0.93x BV จาก ROE 10.7%)</td>
+              <td><strong>195.00 บาท</strong></td>
+              <td><strong>30.88 บาท</strong></td>
+            </tr>
+            <tr>
+              <td><strong>2. P/E Relative Valuation</strong></td>
+              <td>Target P/E = 7.5 เท่า (ค่าเฉลี่ยระยะยาวของกลุ่มธนาคารพาณิชย์ไทย) × EPS ปี 2568</td>
+              <td><strong>180.75 บาท</strong></td>
+              <td><strong>25.88 บาท</strong></td>
+            </tr>
+            <tr>
+              <td><strong>3. Graham Number</strong></td>
+              <td>√(22.5 × EPS × BVPS)</td>
+              <td><strong>403.78 บาท</strong></td>
+              <td><strong>50.77 บาท</strong></td>
+            </tr>
+            <tr>
+              <td><strong>4. DDM (Gordon Growth Model)</strong></td>
+              <td>ใช้ปันผลปกติ (BBL = 10.00฿, KTB = 2.070฿), r = 8.5%, g = 2.5%</td>
+              <td><strong>170.83 บาท</strong></td>
+              <td><strong>35.36 บาท</strong> (รวมพิเศษได้ 45.61฿)</td>
+            </tr>
+            <tr>
+              <td><strong>📌 Conservative Fair Value (เฉลี่ยวิธี 1, 2, 4)</strong></td>
+              <td>ตัด Graham Number ออกเพื่อไม่ให้ Book Value ดึงค่าเฉลี่ยสูงเกินจริง</td>
+              <td><span class="badge badge-green">182.19 บาท (MoS +0.65%)</span></td>
+              <td><span class="badge badge-red">30.71 บาท (Overvalued -40.8%)</span></td>
+            </tr>
+            <tr>
+              <td><strong>📌 Base Case Fair Value (เฉลี่ยครบ 4 วิธี)</strong></td>
+              <td>ค่าเฉลี่ยมาตรฐานทั้ง 4 วิธี</td>
+              <td><span class="badge badge-green">237.59 บาท (MoS +23.82%)</span></td>
+              <td><span class="badge badge-red">35.72 บาท (Overvalued -21.1%)</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout-blue">
+        <strong>💡 เส้นทางการเติบโตของเงินปันผล 5 ปี (2564 → 2568):</strong><br>
+        • <strong>BBL:</strong> <code>3.50 → 4.50 → 7.00 → 8.50 → 10.00 บาท/หุ้น</code> (เติบโตต่อเนื่องทุกปี และใช้ Payout เพียง 41.5% จึงยังมีรูมขึ้นปันผลสู่ระดับ 11–12 บาทได้ในอนาคต)<br>
+        • <strong>KTB:</strong> <code>0.418 → 0.682 → 0.868 → 1.545 → 2.670 บาท/หุ้น</code> (แบ่งเป็นปันผลปกติ <code>2.070 บาท</code> + ปันผลพิเศษ <code>0.600 บาท</code>)
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📈 4. การวิเคราะห์จังหวะเข้าลงทุน (Technical Entry Timing — TF Month)</h2>
+      <div class="chart-grid">
+        <div class="chart-box">
+          <img src="./BBL001.png" alt="กราฟราคาหุ้น BBL รายเดือน (TF 1M) ณ วันที่ 22/10/2026 ราคา 181.00 บาท">
+          <h3>🏦 BBL (TF 1M) — ราคา 181.00 บาท · RSI(14) = 59.36</h3>
+          <p><strong>โครงสร้างกราฟ:</strong> แกว่งตัวขึ้นในกรอบ <strong>Ascending Channel</strong> อย่างมีวินัย เพิ่งทะลุแนวต้าน 175฿ ขึ้นไปแตะ 204฿ แล้วกำลัง <strong>ย่อตัว (Healthy Throwback) 2 แท่งเดือนพร้อม Volume ที่หดตัวลง</strong> เพื่อลงมาทดสอบแนวรับ 172–181 บาท โดยที่ RSI รายเดือน (59.36) ยังไม่เข้าเขต Overbought</p>
+        </div>
+        <div class="chart-box">
+          <img src="./KTB001.png" alt="กราฟราคาหุ้น KTB รายเดือน (TF 1M) ณ วันที่ 22/10/2026 ราคา 43.25 บาท">
+          <h3>🦅 KTB (TF 1M) — ราคา 43.25 บาท · RSI(14) = 77.00 (Overbought)</h3>
+          <p><strong>โครงสร้างกราฟ:</strong> พุ่งขึ้นแบบ <strong>Parabolic Run (ชันเกือบ 90 องศา)</strong> จาก 20฿ ขึ้นไปทำ All-Time High ที่ 46.00 บาท ดันให้ <strong>RSI รายเดือนพุ่งถึง 77.00 (Overbought รุนแรง)</strong> สอดคล้องกับ P/BV 1.30x ที่ตึงตัวมาก จึงห้ามไล่ราคาที่โซนนี้เด็ดขาด</p>
+        </div>
+      </div>
+
+      <h3>📌 ตารางแผนจัดสรรไม้เข้าซื้อ (Actionable Entry Zones)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>หุ้นและกลยุทธ์หลัก</th>
+              <th>ไม้ที่ 1 (โซนเริ่มทยอยสะสม)</th>
+              <th>ไม้ที่ 2 (โซนสะสมหลัก VI)</th>
+              <th>ไม้ที่ 3 (โซนปลอดภัยสูง / Deep Value)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>🏦 BBL (181.00฿)</strong><br><span class="badge badge-green">เริ่มทยอยเข้าไม้แรกได้</span></td>
+              <td><strong>172.00 – 181.00 บาท</strong> (25%–30% ของงบ)<br>โซน Throwback ทดสอบแนวรับเดิม · เท่ากับ Conservative Fair Value (182.19฿) · Gross Yield 5.52%–5.81%</td>
+              <td><strong>155.00 – 165.00 บาท</strong> (40%–50% ของงบ)<br>ฐานพักตัวกลาง Channel · P/BV ~0.53x · Gross Yield 6.06%–6.45%</td>
+              <td><strong>138.00 – 148.00 บาท</strong> (20%–30% ที่เหลือ)<br>ขอบล่างขาขึ้นปี 2024–2025 · MoS &gt; 20% เทียบ Conservative Value · Yield ~7.0%</td>
+            </tr>
+            <tr>
+              <td><strong>🦅 KTB (43.25฿)</strong><br><span class="badge badge-amber">Wait &amp; See (ห้ามไล่ราคา)</span></td>
+              <td><strong>33.00 – 35.50 บาท</strong> (30% ของงบ)<br>รอให้ย่อลงมาหา Base Case Fair Value (35.72฿) และ 1.0x Book Value (33.20฿) · Yield ปกติ ~6.0%</td>
+              <td><strong>27.50 – 30.50 บาท</strong> (50% ของงบ)<br>โซน Throwback ยอดเดิมปี 2013 (27.70฿) + Conservative Value (30.71฿) · Yield ปกติ 6.8%–7.5%</td>
+              <td><strong>23.50 – 26.00 บาท</strong> (20% ที่เหลือ)<br>ฐานพักตัวก่อนรอบ Breakout ใหญ่ปี 2025 (MoS &gt; 20% ทุกวิธี)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <strong>⚠️ ข้อจำกัดและกฎเหล็กสาย VI (technical-timing v1.1):</strong><br>
+        1. การอ่านพฤติกรรม Volume จากภาพกราฟนิ่งมีความไม่แน่นอนสูง ใช้ประกอบการตัดสินใจเท่านั้น ไม่ใช่ข้อเท็จจริงที่พิสูจน์ได้<br>
+        2. <strong>ห้ามตั้ง Stop Loss แบบเทคนิคสำหรับ Core Holding:</strong> จะพิจารณาขายก็ต่อเมื่อเกิด <strong>Thesis พัง (Falsification Test)</strong> เช่น BBL มี NPL พุ่งทะลุ 4.5% / Coverage ต่ำกว่า 180% / ปันผลปกติถูกตัดต่ำกว่า 7.50 บาท หรือ KTB ถูกรัฐใช้รับภาระนโยบายกึ่งการคลังจน NPL พุ่งเกิน 4.0% และปันผลปกติต่ำกว่า 1.40 บาทเท่านั้น
+      </div>
+    </section>
+
+    <footer>
+      จัดทำโดย Antigravity AI สำหรับ พี่ A · มาตรฐานการออกแบบ Supasit.A Studio (A-Class WebCraft) · ข้อมูล ณ วันที่ 22 ตุลาคม 2569
+    </footer>
+  </div>
+</body>
+</html>
