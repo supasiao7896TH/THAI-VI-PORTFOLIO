@@ -6,6 +6,17 @@ const SYMBOLS = [
   { code: 'MEGA', yahoo: 'MEGA.BK', baselinePrice: 33.75, fairValue: 34.20, totalDps: 1.60, normalDps: 1.60, eps: 2.19,  bvps: 11.72 }
 ];
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type'
+};
+
+function sanitizeSyncKey(raw) {
+  const cleaned = String(raw || 'supasit-vi-5m').trim().replace(/[^a-zA-Z0-9_-]/g, '');
+  return cleaned.slice(0, 64) || 'supasit-vi-5m';
+}
+
 async function fetchYahooQuote(item) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(item.yahoo)}?interval=1d&range=5d`;
   try {
@@ -63,16 +74,12 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    if (url.pathname === '/api/quotes') {
-      if (request.method === 'OPTIONS') {
-        return new Response(null, {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, OPTIONS'
-          }
-        });
-      }
+    if (request.method === 'OPTIONS' && url.pathname.startsWith('/api/')) {
+      return new Response(null, { headers: CORS_HEADERS });
+    }
 
+    // 1. Live Stock Quotes Endpoint
+    if (url.pathname === '/api/quotes') {
       const results = await Promise.all(SYMBOLS.map(fetchYahooQuote));
       const quotesMap = {};
       results.forEach((q) => {
@@ -86,13 +93,73 @@ export default {
           quotes: quotesMap
         }),
         {
-          headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Cache-Control': 'public, max-age=60',
-            'Access-Control-Allow-Origin': '*'
-          }
+          headers: Object.assign(
+            {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Cache-Control': 'public, max-age=60'
+            },
+            CORS_HEADERS
+          )
         }
       );
+    }
+
+    // 2. Cloud KV Portfolio Sync Endpoint (/api/portfolio)
+    if (url.pathname === '/api/portfolio') {
+      if (!env || !env.VI_PORTFOLIO_KV) {
+        return new Response(
+          JSON.stringify({ ok: false, error: 'KV namespace not bound' }),
+          { status: 503, headers: Object.assign({ 'Content-Type': 'application/json' }, CORS_HEADERS) }
+        );
+      }
+
+      if (request.method === 'GET') {
+        const keyParam = sanitizeSyncKey(url.searchParams.get('key'));
+        const kvKey = `portfolio:${keyParam}`;
+        const stored = await env.VI_PORTFOLIO_KV.get(kvKey, 'json');
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            syncKey: keyParam,
+            data: stored || null
+          }),
+          {
+            headers: Object.assign(
+              { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+              CORS_HEADERS
+            )
+          }
+        );
+      }
+
+      if (request.method === 'POST') {
+        try {
+          const body = await request.json();
+          const keyParam = sanitizeSyncKey(body.syncKey);
+          const kvKey = `portfolio:${keyParam}`;
+          const payload = {
+            totalCapital: Number(body.totalCapital) || 5000000,
+            holdings: body.holdings || {},
+            dividendLedger: Array.isArray(body.dividendLedger) ? body.dividendLedger.slice(0, 200) : [],
+            updatedAt: new Date().toISOString()
+          };
+          await env.VI_PORTFOLIO_KV.put(kvKey, JSON.stringify(payload));
+          return new Response(
+            JSON.stringify({ ok: true, syncKey: keyParam, updatedAt: payload.updatedAt }),
+            {
+              headers: Object.assign(
+                { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+                CORS_HEADERS
+              )
+            }
+          );
+        } catch (err) {
+          return new Response(
+            JSON.stringify({ ok: false, error: String(err) }),
+            { status: 400, headers: Object.assign({ 'Content-Type': 'application/json' }, CORS_HEADERS) }
+          );
+        }
+      }
     }
 
     if (env && env.ASSETS) {

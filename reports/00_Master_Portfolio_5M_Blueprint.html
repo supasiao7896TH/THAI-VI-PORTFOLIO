@@ -89,12 +89,15 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 6px;
       min-height: 44px;
       padding: 0 18px;
       border-radius: var(--btn-radius);
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
+      line-height: 1;
+      text-align: center;
       text-decoration: none;
       cursor: pointer;
       border: 1px solid var(--brand-ink);
@@ -154,7 +157,7 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       background-color: var(--bg-page);
       border: 1px solid var(--border-line);
       border-radius: var(--card-radius);
@@ -183,7 +186,7 @@
     }
 
     .capital-input {
-      width: 180px;
+      width: 175px;
     }
 
     .table-input {
@@ -203,6 +206,12 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
     }
 
     .kpi-box {
@@ -337,9 +346,9 @@
 
     <!-- Hero & Interactive Simulator -->
     <section class="card">
-      <h1 class="hero-title">🏛️ แผนจัดพอร์ตหุ้นปันผลระยะยาว 5,000,000 บาท (Master VI Dividend Portfolio)</h1>
+      <h1 class="hero-title">🏛️ ห้องบัญชาการพอร์ตหุ้นปันผลระยะยาว 5,000,000 บาท (VI Command Center)</h1>
       <p class="hero-subtitle">
-        กระจายการลงทุนใน 3 อุตสาหกรรมเสาหลัก (พลังงาน 30% · ธนาคาร 35% · สุขภาพรับสังคมสูงวัย 35%) อ้างอิงงบการเงินจริง 56-1 ปี 2568 และราคาตลาดสดออนไลน์
+        กระจายการลงทุนใน 3 อุตสาหกรรมเสาหลัก (พลังงาน 30% · ธนาคาร 35% · สุขภาพรับสังคมสูงวัย 35%) อ้างอิงงบการเงินจริง 56-1 ปี 2568 เชื่อมราคาตลาดสดและซิงก์ข้อมูลผ่าน Cloudflare KV
       </p>
 
       <!-- Simulator Controls -->
@@ -383,26 +392,30 @@
       </div>
     </section>
 
-    <!-- NEW MODULE: My Actual Holdings & Cost Basis Tracker (Local-First) -->
+    <!-- MODULE A: My Actual Holdings & Cloudflare KV Sync -->
     <section class="card" id="actualPortfolioSection">
       <div class="section-title">
-        <span>💼 บันทึกพอร์ตหุ้นจริงของพี่ A (My Actual Holdings &amp; Cost Basis Tracker)</span>
-        <span class="badge badge-success" id="saveStatusBadge">💾 บันทึกอัตโนมัติในเครื่อง (Local-First IndexedDB)</span>
+        <span>💼 1. พอร์ตหุ้นจริงของพี่ A &amp; ระบบซิงก์ข้ามอุปกรณ์ (Actual Holdings &amp; Cloudflare KV Sync)</span>
+        <span class="badge badge-success" id="saveStatusBadge">☁️ พร้อมซิงก์ข้อมูลข้ามอุปกรณ์ (PC ↔ มือถือ)</span>
       </div>
       <p style="font-size:14.5px; color:var(--text-secondary); margin-bottom:16px;">
-        กรอก <strong>จำนวนหุ้นที่ซื้อสะสมแล้วจริง</strong> และ <strong>ราคาต้นทุนเฉลี่ยจริง (บาท/หุ้น)</strong> จากพอร์ตหลักทรัพย์บัวหลวง ระบบจะคำนวณกำไร/ขาดทุนเทียบราคาตลาดสด, เงินปันผลรับจริง (Yield on Cost), และยอดเงินสดคงเหลือสำหรับรอช้อนไม้ถัดไปให้อัตโนมัติค่ะ
+        กรอกจำนวนหุ้นและต้นทุนเฉลี่ยจริงจากพอร์ตบัวหลวง ข้อมูลจะถูกบันทึกทั้งในเครื่อง (IndexedDB) และซิงก์ขึ้น <strong>Cloudflare KV</strong> ด้วยรหัส Sync Key ของพี่ A เพื่อให้เปิดดูจากคอมพิวเตอร์หรือมือถือได้ข้อมูลตรงกันตลอดเวลาค่ะ
       </p>
 
+      <!-- Cloud KV Sync & Backup Bar -->
       <div class="simulator-bar no-print" style="margin-bottom:16px;">
         <div class="input-wrap">
-          <button type="button" class="btn-pill" onclick="saveActualHoldings(true)" aria-label="บันทึกพอร์ตจริง">💾 บันทึกพอร์ตจริง</button>
-          <button type="button" class="btn-pill secondary" onclick="fillSampleTranche1()" aria-label="เติมตัวอย่างการซื้อไม้ที่ 1">⚡ เติมตัวอย่างไม้ที่ 1 (BDMS)</button>
-          <button type="button" class="btn-pill secondary" onclick="clearActualHoldings()" aria-label="ล้างค่าพอร์ตจริงเป็นศูนย์">🧹 ล้างค่าเป็น 0</button>
+          <label for="syncKeyInput" style="font-weight:700; font-size:14px;">🔑 รหัส Sync Key:</label>
+          <input id="syncKeyInput" class="capital-input" type="text" value="supasit-vi-5m" style="width:165px;" aria-label="รหัส Sync Key สำหรับซิงก์ข้ามเครื่อง" />
+          <button type="button" class="btn-pill" onclick="syncToCloudKv(true)" aria-label="บันทึกข้อมูลพอร์ตขึ้น Cloud">☁️ บันทึกขึ้น Cloud</button>
+          <button type="button" class="btn-pill secondary" onclick="pullFromCloudKv(true)" aria-label="ดึงข้อมูลพอร์ตจาก Cloud">📲 ดึงจาก Cloud</button>
         </div>
         <div class="input-wrap">
-          <button type="button" class="btn-pill secondary" onclick="exportActualHoldingsJson()" aria-label="ส่งออกไฟล์ JSON สำรองข้อมูล">📥 ส่งออก Backup (.json)</button>
-          <label class="btn-pill secondary" style="cursor:pointer;" aria-label="นำเข้าไฟล์ JSON สำรองข้อมูล">
-            📤 นำเข้า Backup (.json)
+          <button type="button" class="btn-pill secondary" onclick="fillSampleTranche1()" aria-label="เติมตัวอย่างการซื้อไม้ที่ 1">⚡ ตัวอย่างไม้ 1 (BDMS)</button>
+          <button type="button" class="btn-pill secondary" onclick="clearActualHoldings()" aria-label="ล้างค่าพอร์ตจริงเป็นศูนย์">🧹 ล้างเป็น 0</button>
+          <button type="button" class="btn-pill secondary" onclick="exportActualHoldingsJson()" aria-label="ส่งออกไฟล์ JSON">📥 Backup (.json)</button>
+          <label class="btn-pill secondary" style="cursor:pointer;" aria-label="นำเข้าไฟล์ JSON">
+            📤 Restore
             <input type="file" id="importJsonInput" accept=".json" style="display:none;" onchange="importActualHoldingsJson(event)" />
           </label>
         </div>
@@ -453,10 +466,185 @@
       </div>
     </section>
 
-    <!-- NEW MODULE: Dividend Tax Credit Calculator (Section 47 Bis) -->
+    <!-- MODULE B: Smart Order & Average Cost Calculator (Bualuang Commission 0.168%) -->
+    <section class="card" id="smartOrderSection">
+      <div class="section-title">
+        <span>🧮 2. เครื่องจำลองเคาะซื้อไม้ถัดไป &amp; คำนวณต้นทุนถัวเฉลี่ยใหม่ (รวมค่าคอมฯ บัวหลวง 0.168%)</span>
+        <span class="badge badge-amber">Bualuang Securities Cash Balance Fee (0.157% + VAT 7%)</span>
+      </div>
+      <p style="font-size:14.5px; color:var(--text-secondary); margin-bottom:16px;">
+        ทดลองจำลองคำสั่งซื้อก่อนกดเคาะจริงใน Streaming เพื่อดูว่าถ้าซื้อเพิ่มที่ราคานี้ ต้นทุนเฉลี่ยต่อหุ้น (รวมค่าคอมมิชชันและ VAT แล้ว) จะลดลงเหลือกี่บาท และได้ <code>Yield on Cost</code> ใหม่กี่ % พร้อมปุ่มกดบันทึกเข้าพอร์ตจริงได้ทันทีค่ะ
+      </p>
+
+      <div class="simulator-bar no-print" style="margin-bottom:16px;">
+        <div class="input-wrap">
+          <label for="orderStockSelect" style="font-weight:700; font-size:14px;">📌 เลือกหุ้นที่จะซื้อเพิ่ม:</label>
+          <select id="orderStockSelect" class="select-input" onchange="onOrderStockChange()" aria-label="เลือกหุ้นที่จะจำลองซื้อ">
+            <option value="BDMS" selected>🏥 BDMS (กรุงเทพดุสิตเวชการ)</option>
+            <option value="BBL">🏦 BBL (ธนาคารกรุงเทพ)</option>
+            <option value="PTT">⚡ PTT (บมจ.ปตท.)</option>
+            <option value="KTB">🏦 KTB (ธนาคารกรุงไทย)</option>
+            <option value="MEGA">💊 MEGA (เมก้า ไลฟ์ไซแอ็นซ์)</option>
+          </select>
+
+          <label for="orderSharesInput" style="font-weight:700; font-size:14px;">จำนวนหุ้นที่ซื้อเพิ่ม:</label>
+          <input id="orderSharesInput" class="capital-input" type="number" min="100" step="100" value="10000" style="width:130px;" oninput="renderSmartOrderCalc()" aria-label="จำนวนหุ้นที่จะซื้อเพิ่ม" />
+
+          <label for="orderPriceInput" style="font-weight:700; font-size:14px;">ราคาเคาะซื้อ (บาท):</label>
+          <input id="orderPriceInput" class="capital-input" type="number" min="1" step="0.05" value="19.30" style="width:120px;" oninput="renderSmartOrderCalc()" aria-label="ราคาที่จะเคาะซื้อ" />
+        </div>
+        <div class="input-wrap">
+          <button type="button" class="btn-pill secondary" onclick="setOrderPriceToLive()" aria-label="ใช้ราคาตลาดสด">⚡ ใช้ราคาตลาดสด</button>
+          <button type="button" class="btn-pill" onclick="commitOrderToActualHoldings()" aria-label="ยืนยันบันทึกไม้ซื้อนี้เข้าพอร์ตจริง">✅ บันทึกไม้ซื้อนี้เข้าพอร์ตจริง</button>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="kpi-box" style="border-left: 4px solid #1D4ED8;">
+          <div class="kpi-label">ยอดเงินสดที่ต้องจ่ายสุทธิ (รวมค่าคอมฯ)</div>
+          <div class="kpi-value" id="ordNetCashCost">193,324 บาท</div>
+          <div class="kpi-sub" id="ordCommissionSub">ค่าคอมฯ บัวหลวง + VAT (0.168%) = 324 บาท</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #15803D;">
+          <div class="kpi-label">ต้นทุนเฉลี่ยใหม่หลังซื้อ (New Avg Cost)</div>
+          <div class="kpi-value" id="ordNewAvgCost">19.33 บาท/หุ้น</div>
+          <div class="kpi-sub" id="ordCostDiffSub">เทียบต้นทุนเดิมในพอร์ต: —</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #8A6410;">
+          <div class="kpi-label">จำนวนหุ้นรวมใหม่ &amp; ปันผลรับรวมต่อปี</div>
+          <div class="kpi-value" id="ordNewTotalShares">10,000 หุ้น</div>
+          <div class="kpi-sub" id="ordNewAnnualDiv">ปันผลรับรวมใหม่: 10,000 บาท/ปี</div>
+        </div>
+        <div class="kpi-box" style="border-left: 4px solid #15803D;">
+          <div class="kpi-label">Yield on Cost ใหม่ &amp; Margin of Safety</div>
+          <div class="kpi-value" id="ordNewYoc">5.17% ต่อปี</div>
+          <div class="kpi-sub" id="ordNewMosSub">MoS ณ ต้นทุนเฉลี่ยใหม่: +19.9%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODULE C: Smart Dividend Reinvestment & Rebalancing Advisor -->
+    <section class="card" id="reinvestAdvisorSection">
+      <div class="section-title">
+        <span>⚖️ 3. ผู้ช่วยแนะนำการนำปันผล/เงินสดไปทบต้นอัตโนมัติ (Smart Reinvestment &amp; Rebalancing Advisor)</span>
+        <span class="badge badge-success" id="reinvestTopPickBadge">วิเคราะห์จากราคาตลาดสด + น้ำหนักพอร์ตที่ยังขาด</span>
+      </div>
+      <p style="font-size:14.5px; color:var(--text-secondary); margin-bottom:16px;">
+        เมื่อพี่ A ได้รับเงินปันผลหรือมีเงินสดก้อนใหม่ ระบบจะให้คะแนนความน่าซื้อ (<code>Smart Reinvest Score</code>) โดยคำนวณจาก <strong>1) Margin of Safety ณ ราคาตลาดสด</strong>, <strong>2) Dividend Yield</strong>, และ <strong>3) สัดส่วนพอร์ตจริงที่ยังต่ำกว่าเป้าหมาย (Underweight Gap)</strong> เพื่อแนะนำว่าวันนี้ควรนำเงินไปทบต้นในหุ้นตัวไหนคุ้มค่าที่สุดค่ะ
+      </p>
+
+      <div class="simulator-bar no-print" style="margin-bottom:16px;">
+        <div class="input-wrap">
+          <label for="reinvestCashInput" style="font-weight:700; font-size:14px;">💵 จำนวนเงินปันผล/เงินสดที่จะนำมาทบต้น (บาท):</label>
+          <input id="reinvestCashInput" class="capital-input" type="number" min="5000" step="5000" value="100000" oninput="renderReinvestAdvisor()" aria-label="จำนวนเงินที่จะนำมาลงทุนทบต้น" />
+          <button type="button" class="btn-pill secondary" onclick="setReinvestCash(50000)">50,000 บ.</button>
+          <button type="button" class="btn-pill secondary" onclick="setReinvestCash(100000)">100,000 บ.</button>
+          <button type="button" class="btn-pill secondary" onclick="setReinvestCash(250000)">250,000 บ.</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>อันดับความน่าซื้อวันนี้</th>
+              <th>หุ้น</th>
+              <th>ราคาตลาดสด (MoS %)</th>
+              <th>สัดส่วนพอร์ตจริง vs เป้าหมาย</th>
+              <th>จำนวนหุ้นที่ซื้อได้ด้วยเงินก้อนนี้</th>
+              <th>เงินลงทุนที่ใช้จริง</th>
+              <th>ปันผลที่ได้เพิ่ม/ปี</th>
+              <th>คำแนะนำการทบต้น</th>
+            </tr>
+          </thead>
+          <tbody id="reinvestAdvisorBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MODULE D: Dividend Cashflow Ledger & XD Calendar -->
+    <section class="card" id="dividendLedgerSection">
+      <div class="section-title">
+        <span>📅 4. สมุดบันทึกเงินปันผลรับจริงสะสม &amp; ปฏิทินแจ้งเตือนฤดูกาล XD (Dividend Ledger &amp; XD Calendar)</span>
+        <span class="badge badge-amber" id="cumDividendBadge">เงินปันผลรับสะสมสุทธิ: 0 บาท (คืนทุน 0.00%)</span>
+      </div>
+      <p style="font-size:14.5px; color:var(--text-secondary); margin-bottom:16px;">
+        ติดตามช่วงเดือนขึ้นเครื่องหมาย <code>XD</code> ของทั้ง 5 บริษัท และกดบันทึกเงินปันผลที่ได้รับเข้าบัญชีจริงในแต่ละงวด เพื่อสะสมสถิติกระแสเงินสดรับรวม (<code>Cumulative Passive Income</code>) ตลอดอายุการถือครองพอร์ตค่ะ
+      </p>
+
+      <!-- XD Seasonal Calendar Reference Table -->
+      <div class="table-wrap" style="margin-bottom:20px;">
+        <table>
+          <thead>
+            <tr>
+              <th>หุ้น</th>
+              <th>งวดครึ่งปีแรก (1H Interim XD / จ่ายเงิน)</th>
+              <th>งวดประจำปี (2H Final XD / จ่ายเงิน)</th>
+              <th>ปันผลต่อหุ้นอ้างอิง (DPS ปี 68)</th>
+              <th>ปันผลคาดการณ์ตามหุ้นที่ถือจริง</th>
+            </tr>
+          </thead>
+          <tbody id="xdCalendarBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add Actual Dividend Record Bar -->
+      <div class="simulator-bar no-print" style="margin-bottom:16px;">
+        <div class="input-wrap">
+          <label for="divRecStock" style="font-weight:700; font-size:14px;">💰 บันทึกรับปันผลจริง:</label>
+          <select id="divRecStock" class="select-input" onchange="autofillDividendForm()" aria-label="เลือกหุ้นที่ได้รับปันผล">
+            <option value="PTT">⚡ PTT</option>
+            <option value="BBL">🏦 BBL</option>
+            <option value="KTB">🏦 KTB</option>
+            <option value="BDMS" selected>🏥 BDMS</option>
+            <option value="MEGA">💊 MEGA</option>
+          </select>
+
+          <select id="divRecPeriod" class="select-input" onchange="autofillDividendForm()" aria-label="เลือกงวดปันผล">
+            <option value="งวดครึ่งปีแรก (1H Interim)">งวดครึ่งปีแรก (1H Interim - ก.ย./ต.ค.)</option>
+            <option value="งวดประจำปี (2H Final)" selected>งวดประจำปี (2H Final - เม.ย./พ.ค.)</option>
+          </select>
+
+          <label for="divRecShares" style="font-weight:700; font-size:14px;">จำนวนหุ้น:</label>
+          <input id="divRecShares" class="capital-input" type="number" min="100" step="100" value="19200" style="width:115px;" oninput="recalcDivFormGross()" aria-label="จำนวนหุ้นที่ได้ปันผล" />
+
+          <label for="divRecDps" style="font-weight:700; font-size:14px;">DPS (บ.):</label>
+          <input id="divRecDps" class="capital-input" type="number" min="0.01" step="0.01" value="0.65" style="width:95px;" oninput="recalcDivFormGross()" aria-label="ปันผลต่อหุ้น" />
+        </div>
+        <div class="input-wrap">
+          <button type="button" class="btn-pill" onclick="addDividendRecord()" aria-label="บันทึกรายการรับเงินปันผลเข้าสมุดสะสม">➕ บันทึกรับเงินปันผลงวดนี้</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>วันที่บันทึก</th>
+              <th>หุ้น</th>
+              <th>งวดผลประกอบการ</th>
+              <th>จำนวนหุ้น × DPS</th>
+              <th>ปันผลก่อนภาษี (บาท)</th>
+              <th>ภาษีหัก ณ ที่จ่าย 10%</th>
+              <th>เงินสดรับสุทธิเข้าบัญชี (บาท)</th>
+              <th class="no-print">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="dividendLedgerBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MODULE E: Dividend Tax Credit Calculator (Section 47 Bis) -->
     <section class="card" id="taxCalculatorSection">
       <div class="section-title">
-        <span>🧾 เครื่องคำนวณเครดิตภาษีเงินปันผล (มาตรา 47 ทวิ — ยื่นแบบ ภ.ง.ด.90)</span>
+        <span>🧾 5. เครื่องคำนวณเครดิตภาษีเงินปันผล (มาตรา 47 ทวิ — ยื่นแบบ ภ.ง.ด.90)</span>
         <span class="badge badge-amber" id="taxRecBadge">คำนวณเปรียบเทียบความคุ้มค่าการขอคืนภาษี</span>
       </div>
       <p style="font-size:14.5px; color:var(--text-secondary); margin-bottom:16px;">
@@ -513,7 +701,7 @@
     <!-- Table 1: Portfolio Allocation & Dividend Simulation -->
     <section class="card">
       <div class="section-title">
-        <span>📊 1. ตารางจำลองจัดสรรวงเงิน จำนวนหุ้น และกระแสเงินสดปันผลรายตัว</span>
+        <span>📊 6. ตารางจำลองจัดสรรวงเงิน จำนวนหุ้น และกระแสเงินสดปันผลรายตัว</span>
         <span class="badge badge-amber" id="modeBadgeLabel">โหมดคำนวณ: สะสมครบ 3 ไม้ (Target Average Cost)</span>
       </div>
       <div class="table-wrap">
@@ -540,7 +728,7 @@
     <!-- Table 2: 3-Tranche Execution Plan -->
     <section class="card">
       <div class="section-title">
-        <span>🎯 2. แผนแบ่งไม้ซื้อจริง 3 ไม้ &amp; สัญญาณไฟจราจรเทียบราคาตลาดสด</span>
+        <span>🎯 7. แผนแบ่งไม้ซื้อจริง 3 ไม้ &amp; สัญญาณไฟจราจรเทียบราคาตลาดสด</span>
         <span class="badge badge-success" id="day1ActionBadge">สัปดาห์แรกใช้เงินสด 15% (750,000 บ.) + พักเงินรอช้อน 85% (4,250,000 บ.)</span>
       </div>
       <div class="table-wrap">
@@ -565,7 +753,7 @@
     <!-- Table 3: Dividend Calendar & 10-Year Compounding -->
     <section class="card">
       <div class="section-title">
-        <span>🗓️ 3. ปฏิทินรับเงินปันผลรายปี &amp; จำลองการทบต้น 10 ปี (Snowball Effect)</span>
+        <span>🗓️ 8. จำลองการทบต้น 10 ปี (10-Year Snowball Effect)</span>
         <span class="badge badge-amber">สมมติฐานนำปันผลกลับไปลงทุนซ้ำ + ปันผลเติบโตเฉลี่ย 3%/ปี</span>
       </div>
       <div class="table-wrap">
@@ -589,6 +777,8 @@
   </div>
 
   <script>
+    const BUALUANG_FEE_RATE = 0.00157 * 1.07; // 0.157% commission + 7% VAT = 0.16799%
+
     const PORTFOLIO_STOCKS = [
       {
         code: 'PTT',
@@ -599,6 +789,10 @@
         fairValue: 40.66,
         totalDps: 2.10,
         normalDps: 1.90,
+        interimDps: 0.80,
+        finalDps: 1.30,
+        xdInterim: 'XD ต.ค. → จ่าย ต.ค.',
+        xdFinal: 'XD มี.ค. → จ่าย เม.ย.',
         citRate: 0.20,
         t1Zone: '31.00 – 32.50 บาท (รอรับแนวรับแรก)',
         t2Zone: '29.00 – 30.50 บาท (แนวรับฐาน 1W)',
@@ -616,6 +810,10 @@
         fairValue: 214.08,
         totalDps: 10.00,
         normalDps: 10.00,
+        interimDps: 2.00,
+        finalDps: 8.00,
+        xdInterim: 'XD ก.ย. → จ่าย ก.ย.',
+        xdFinal: 'XD เม.ย. → จ่าย พ.ค.',
         citRate: 0.20,
         t1Zone: '158.00 – 162.00 บาท (โซนสะสมไม้แรก)',
         t2Zone: '148.00 – 155.00 บาท (แนวรับฐาน 1W)',
@@ -633,6 +831,10 @@
         fairValue: 34.33,
         totalDps: 2.07,
         normalDps: 1.47,
+        interimDps: 0.43,
+        finalDps: 1.64,
+        xdInterim: 'XD ก.ย. → จ่าย ก.ย.',
+        xdFinal: 'XD เม.ย. → จ่าย พ.ค.',
         citRate: 0.20,
         t1Zone: '29.50 – 31.00 บาท (รอ RSI คลายตัว)',
         t2Zone: '27.00 – 28.50 บาท (Target Buy Zone)',
@@ -650,6 +852,10 @@
         fairValue: 24.13,
         totalDps: 1.00,
         normalDps: 0.75,
+        interimDps: 0.35,
+        finalDps: 0.65,
+        xdInterim: 'XD ก.ย. → จ่าย ก.ย.',
+        xdFinal: 'XD มี.ค. → จ่าย เม.ย.',
         citRate: 0.20,
         t1Zone: '19.00 – 19.50 บาท (เข้าซื้อได้ทันที!)',
         t2Zone: '17.50 – 18.75 บาท (Yield ปกติครบ 4%)',
@@ -667,6 +873,10 @@
         fairValue: 34.20,
         totalDps: 1.60,
         normalDps: 1.60,
+        interimDps: 0.80,
+        finalDps: 0.80,
+        xdInterim: 'XD ส.ค. → จ่าย ก.ย.',
+        xdFinal: 'XD มี.ค. → จ่าย เม.ย.',
         citRate: 0.0,
         t1Zone: '29.50 – 31.50 บาท (ต่ำกว่า Base FV)',
         t2Zone: '26.50 – 28.50 บาท (Target Buy Zone)',
@@ -677,7 +887,7 @@
       }
     ];
 
-    const STORAGE_KEY = 'SUPASIT_VI_ACTUAL_HOLDINGS_V1';
+    const STORAGE_KEY = 'SUPASIT_VI_ACTUAL_HOLDINGS_V2';
     let currentMode = 'target';
     let actualHoldings = {
       PTT:  { shares: 0, avgCost: 30.50 },
@@ -686,30 +896,59 @@
       BDMS: { shares: 0, avgCost: 19.30 },
       MEGA: { shares: 0, avgCost: 30.00 }
     };
+    let dividendLedger = [];
 
     function fmtNum(n) {
       return Math.round(n).toLocaleString('th-TH');
     }
 
-    // IndexedDB + LocalStorage Persistence Engine
+    function createCell(text, isStrong) {
+      const td = document.createElement('td');
+      if (isStrong) {
+        const strong = document.createElement('strong');
+        strong.textContent = text;
+        td.appendChild(strong);
+      } else {
+        td.textContent = text;
+      }
+      return td;
+    }
+
+    // LocalStorage + IndexedDB + Cloud KV Persistence
     function loadActualHoldings() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('SUPASIT_VI_ACTUAL_HOLDINGS_V1');
         if (raw) {
           const parsed = JSON.parse(raw);
+          const srcHoldings = parsed.holdings || parsed;
           Object.keys(actualHoldings).forEach((k) => {
-            if (parsed[k]) {
-              actualHoldings[k].shares = Math.max(0, Number(parsed[k].shares) || 0);
-              actualHoldings[k].avgCost = Math.max(0, Number(parsed[k].avgCost) || actualHoldings[k].avgCost);
+            if (srcHoldings[k]) {
+              actualHoldings[k].shares = Math.max(0, Number(srcHoldings[k].shares) || 0);
+              actualHoldings[k].avgCost = Math.max(0, Number(srcHoldings[k].avgCost) || actualHoldings[k].avgCost);
             }
           });
+          if (Array.isArray(parsed.dividendLedger)) {
+            dividendLedger = parsed.dividendLedger;
+          }
+          if (parsed.syncKey && document.getElementById('syncKeyInput')) {
+            document.getElementById('syncKeyInput').value = parsed.syncKey;
+          }
         }
       } catch (_e) {}
     }
 
-    function saveActualHoldings(showFeedback) {
+    function saveActualHoldings(showFeedback, alsoSyncCloud) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(actualHoldings));
+        const syncKey = document.getElementById('syncKeyInput')?.value || 'supasit-vi-5m';
+        const stateObj = {
+          syncKey,
+          totalCapital: parseFloat(document.getElementById('capitalInput').value) || 5000000,
+          holdings: actualHoldings,
+          dividendLedger,
+          updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stateObj));
+
         if ('indexedDB' in window) {
           const req = indexedDB.open('ThaiViPortfolioDB', 1);
           req.onupgradeneeded = (ev) => {
@@ -721,16 +960,86 @@
           req.onsuccess = (ev) => {
             const db = ev.target.result;
             const tx = db.transaction('holdings', 'readwrite');
-            tx.objectStore('holdings').put(actualHoldings, 'current');
+            tx.objectStore('holdings').put(stateObj, 'current');
           };
         }
+
         if (showFeedback) {
           const badge = document.getElementById('saveStatusBadge');
           if (badge) {
-            badge.textContent = '✅ บันทึกข้อมูลพอร์ตจริงเรียบร้อยแล้ว (' + new Date().toLocaleTimeString('th-TH') + ')';
+            badge.textContent = '💾 บันทึกในเครื่องแล้ว (' + new Date().toLocaleTimeString('th-TH') + ')';
           }
         }
+        if (alsoSyncCloud) {
+          syncToCloudKv(false);
+        }
       } catch (_e) {}
+    }
+
+    async function syncToCloudKv(showManualToast) {
+      const badge = document.getElementById('saveStatusBadge');
+      const syncKey = document.getElementById('syncKeyInput')?.value || 'supasit-vi-5m';
+      try {
+        if (showManualToast && badge) {
+          badge.textContent = '⏳ กำลังซิงก์ขึ้น Cloudflare KV...';
+        }
+        const payload = {
+          syncKey,
+          totalCapital: parseFloat(document.getElementById('capitalInput').value) || 5000000,
+          holdings: actualHoldings,
+          dividendLedger
+        };
+        const res = await fetch('/api/portfolio', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data && data.ok && badge) {
+          badge.className = 'badge badge-success';
+          badge.textContent = '☁️ ซิงก์ขึ้น Cloud สำเร็จ (' + new Date().toLocaleTimeString('th-TH') + ')';
+        }
+      } catch (_err) {
+        if (showManualToast && badge) {
+          badge.className = 'badge badge-warning';
+          badge.textContent = '📌 บันทึกเฉพาะในเครื่อง (โหมดออฟไลน์)';
+        }
+      }
+    }
+
+    async function pullFromCloudKv(showManualToast) {
+      const badge = document.getElementById('saveStatusBadge');
+      const syncKey = document.getElementById('syncKeyInput')?.value || 'supasit-vi-5m';
+      try {
+        const res = await fetch('/api/portfolio?key=' + encodeURIComponent(syncKey), { cache: 'no-store' });
+        if (!res.ok) return;
+        const result = await res.json();
+        if (result && result.ok && result.data) {
+          const cloud = result.data;
+          if (cloud.totalCapital) {
+            document.getElementById('capitalInput').value = cloud.totalCapital;
+          }
+          if (cloud.holdings) {
+            Object.keys(actualHoldings).forEach((k) => {
+              if (cloud.holdings[k]) {
+                actualHoldings[k].shares = Math.max(0, Number(cloud.holdings[k].shares) || 0);
+                actualHoldings[k].avgCost = Math.max(0, Number(cloud.holdings[k].avgCost) || actualHoldings[k].avgCost);
+              }
+            });
+          }
+          if (Array.isArray(cloud.dividendLedger)) {
+            dividendLedger = cloud.dividendLedger;
+          }
+          saveActualHoldings(false, false);
+          renderAllModules();
+          if (badge) {
+            badge.className = 'badge badge-success';
+            badge.textContent = '☁️ ดึงพอร์ตล่าสุดจาก Cloud สำเร็จ (' + new Date().toLocaleTimeString('th-TH') + ')';
+          }
+        } else if (showManualToast && badge) {
+          badge.textContent = 'ℹ️ ยังไม่มีข้อมูลบน Cloud สำหรับรหัสนี้ (กด "บันทึกขึ้น Cloud" ก่อนค่ะ)';
+        }
+      } catch (_err) {}
     }
 
     function fillSampleTranche1() {
@@ -739,26 +1048,25 @@
       const bdmsBudgetT1 = totalCapital * 0.25 * 0.30;
       const bdmsLivePrice = PORTFOLIO_STOCKS.find((s) => s.code === 'BDMS')?.currentPrice || 19.30;
       actualHoldings.BDMS.shares = Math.floor((bdmsBudgetT1 / bdmsLivePrice) / 100) * 100;
-      actualHoldings.BDMS.avgCost = bdmsLivePrice;
-      saveActualHoldings(true);
-      renderActualPortfolio();
-      renderTaxCalculator();
+      actualHoldings.BDMS.avgCost = Number((bdmsLivePrice * (1 + BUALUANG_FEE_RATE)).toFixed(4));
+      saveActualHoldings(true, true);
+      renderAllModules();
     }
 
     function clearActualHoldings() {
       Object.keys(actualHoldings).forEach((k) => {
         actualHoldings[k].shares = 0;
       });
-      saveActualHoldings(true);
-      renderActualPortfolio();
-      renderTaxCalculator();
+      saveActualHoldings(true, true);
+      renderAllModules();
     }
 
     function exportActualHoldingsJson() {
       const payload = {
         exportedAt: new Date().toISOString(),
         totalCapital: parseFloat(document.getElementById('capitalInput').value) || 5000000,
-        holdings: actualHoldings
+        holdings: actualHoldings,
+        dividendLedger
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -787,21 +1095,291 @@
               }
             });
           }
-          saveActualHoldings(true);
-          renderPortfolio();
-          renderActualPortfolio();
-          renderTaxCalculator();
+          if (Array.isArray(data.dividendLedger)) {
+            dividendLedger = data.dividendLedger;
+          }
+          saveActualHoldings(true, true);
+          renderAllModules();
         } catch (_err) {}
       };
       reader.readAsText(file);
     }
 
+    // MODULE B: Smart Order & Average Cost Calculator
+    function onOrderStockChange() {
+      const code = document.getElementById('orderStockSelect')?.value || 'BDMS';
+      const st = PORTFOLIO_STOCKS.find((s) => s.code === code);
+      if (st) {
+        document.getElementById('orderPriceInput').value = st.currentPrice.toFixed(2);
+      }
+      renderSmartOrderCalc();
+    }
+
+    function setOrderPriceToLive() {
+      onOrderStockChange();
+    }
+
+    function renderSmartOrderCalc() {
+      const code = document.getElementById('orderStockSelect')?.value || 'BDMS';
+      const st = PORTFOLIO_STOCKS.find((s) => s.code === code) || PORTFOLIO_STOCKS[3];
+      const existing = actualHoldings[code] || { shares: 0, avgCost: st.targetCost };
+
+      const addShares = Math.max(0, Number(document.getElementById('orderSharesInput')?.value) || 0);
+      const orderPrice = Math.max(0.01, Number(document.getElementById('orderPriceInput')?.value) || st.currentPrice);
+
+      const grossOrderAmt = addShares * orderPrice;
+      const commissionFee = grossOrderAmt * BUALUANG_FEE_RATE;
+      const netOrderCash = grossOrderAmt + commissionFee;
+
+      const oldTotalCost = existing.shares * existing.avgCost;
+      const newTotalShares = existing.shares + addShares;
+      const newTotalCost = oldTotalCost + netOrderCash;
+      const newAvgCost = newTotalShares > 0 ? (newTotalCost / newTotalShares) : orderPrice;
+
+      const newAnnualDiv = newTotalShares * st.totalDps;
+      const newYoc = newTotalCost > 0 ? ((newAnnualDiv / newTotalCost) * 100).toFixed(2) : '0.00';
+      const newMos = (((st.fairValue - newAvgCost) / st.fairValue) * 100).toFixed(1);
+
+      document.getElementById('ordNetCashCost').textContent = fmtNum(netOrderCash) + ' บาท';
+      document.getElementById('ordCommissionSub').textContent = 'ค่าคอมฯ บัวหลวง + VAT (0.168%) = ' + fmtNum(commissionFee) + ' บาท';
+      document.getElementById('ordNewAvgCost').textContent = newAvgCost.toFixed(2) + ' บาท/หุ้น';
+
+      const diffEl = document.getElementById('ordCostDiffSub');
+      if (existing.shares > 0) {
+        const diff = newAvgCost - existing.avgCost;
+        const sign = diff > 0 ? '+' : '';
+        diffEl.textContent = 'จากทุนเดิม ' + existing.avgCost.toFixed(2) + ' บ. (' + sign + diff.toFixed(2) + ' บ./หุ้น)';
+      } else {
+        diffEl.textContent = 'ไม้แรกของหุ้น ' + code + ' (รวมค่าคอมฯ แล้ว)';
+      }
+
+      document.getElementById('ordNewTotalShares').textContent = fmtNum(newTotalShares) + ' หุ้น';
+      document.getElementById('ordNewAnnualDiv').textContent = 'ปันผลรับรวมใหม่: ' + fmtNum(newAnnualDiv) + ' บาท/ปี';
+      document.getElementById('ordNewYoc').textContent = newYoc + '% ต่อปี';
+      document.getElementById('ordNewMosSub').textContent = 'MoS ณ ต้นทุนเฉลี่ยใหม่: ' + (Number(newMos) > 0 ? '+' : '') + newMos + '%';
+    }
+
+    function commitOrderToActualHoldings() {
+      const code = document.getElementById('orderStockSelect')?.value || 'BDMS';
+      const st = PORTFOLIO_STOCKS.find((s) => s.code === code) || PORTFOLIO_STOCKS[3];
+      const existing = actualHoldings[code] || { shares: 0, avgCost: st.targetCost };
+      const addShares = Math.max(0, Number(document.getElementById('orderSharesInput')?.value) || 0);
+      const orderPrice = Math.max(0.01, Number(document.getElementById('orderPriceInput')?.value) || st.currentPrice);
+      if (addShares <= 0) return;
+
+      const netOrderCash = (addShares * orderPrice) * (1 + BUALUANG_FEE_RATE);
+      const oldTotalCost = existing.shares * existing.avgCost;
+      const newTotalShares = existing.shares + addShares;
+      const newAvgCost = (oldTotalCost + netOrderCash) / newTotalShares;
+
+      actualHoldings[code].shares = newTotalShares;
+      actualHoldings[code].avgCost = Number(newAvgCost.toFixed(4));
+      saveActualHoldings(true, true);
+      renderAllModules();
+    }
+
+    // MODULE C: Smart Reinvestment & Rebalancing Advisor
+    function setReinvestCash(amt) {
+      document.getElementById('reinvestCashInput').value = amt;
+      renderReinvestAdvisor();
+    }
+
+    function renderReinvestAdvisor() {
+      const tbody = document.getElementById('reinvestAdvisorBody');
+      if (!tbody) return;
+      while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+
+      const reinvestCash = Math.max(1000, Number(document.getElementById('reinvestCashInput')?.value) || 100000);
+      const rawCap = parseFloat(document.getElementById('capitalInput').value);
+      const totalCapital = (!isNaN(rawCap) && rawCap >= 100000) ? rawCap : 5000000;
+
+      let totalActualInvested = 0;
+      PORTFOLIO_STOCKS.forEach((st) => {
+        const h = actualHoldings[st.code];
+        totalActualInvested += (h.shares * h.avgCost);
+      });
+
+      const ranked = PORTFOLIO_STOCKS.map((st) => {
+        const h = actualHoldings[st.code];
+        const curInvested = h.shares * h.avgCost;
+        const actualWeight = totalActualInvested > 0 ? (curInvested / totalActualInvested) : 0;
+        const weightGapPct = (st.weight - actualWeight) * 100; // positive = underweight
+        const mosPct = ((st.fairValue - st.currentPrice) / st.fairValue) * 100;
+        const liveYield = (st.totalDps / st.currentPrice) * 100;
+
+        // Composite VI Reinvest Score: MoS (x1.5) + Yield (x2.0) + Underweight Gap (x0.8)
+        const score = (mosPct * 1.5) + (liveYield * 2.0) + (weightGapPct * 0.8);
+        const buyableShares = Math.floor((reinvestCash / (st.currentPrice * (1 + BUALUANG_FEE_RATE))) / 100) * 100;
+        const cashUsed = buyableShares * st.currentPrice * (1 + BUALUANG_FEE_RATE);
+        const addedDiv = buyableShares * st.totalDps;
+
+        return {
+          st,
+          actualWeightPct: (actualWeight * 100).toFixed(1),
+          targetWeightPct: (st.weight * 100).toFixed(0),
+          mosPct,
+          liveYield,
+          score,
+          buyableShares,
+          cashUsed,
+          addedDiv
+        };
+      }).sort((a, b) => b.score - a.score);
+
+      if (ranked.length > 0) {
+        const top = ranked[0];
+        const badge = document.getElementById('reinvestTopPickBadge');
+        if (badge) {
+          badge.textContent = '🏆 แนะนำทบต้นอันดับ 1 วันนี้: ' + top.st.code + ' (ได้ +' + fmtNum(top.buyableShares) + ' หุ้น | ปันผลเพิ่ม +' + fmtNum(top.addedDiv) + ' บ./ปี)';
+        }
+      }
+
+      ranked.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.appendChild(createCell('อันดับ ' + (idx + 1), true));
+        tr.appendChild(createCell(item.st.name, true));
+
+        const mosSign = item.mosPct > 0 ? '+' : '';
+        tr.appendChild(createCell(item.st.currentPrice.toFixed(2) + ' บ. (MoS ' + mosSign + item.mosPct.toFixed(1) + '%)', false));
+        tr.appendChild(createCell('ถือจริง ' + item.actualWeightPct + '% / เป้า ' + item.targetWeightPct + '%', false));
+        tr.appendChild(createCell(fmtNum(item.buyableShares) + ' หุ้น', true));
+        tr.appendChild(createCell(fmtNum(item.cashUsed) + ' บ.', false));
+        tr.appendChild(createCell('+' + fmtNum(item.addedDiv) + ' บ./ปี (' + item.liveYield.toFixed(2) + '%)', true));
+
+        const recTd = document.createElement('td');
+        const badge = document.createElement('span');
+        if (idx === 0 && item.mosPct >= 0) {
+          badge.className = 'badge badge-success';
+          badge.textContent = '🟢 คุ้มค่าที่สุดในการทบต้นวันนี้';
+        } else if (item.mosPct >= 0) {
+          badge.className = 'badge badge-amber';
+          badge.textContent = '🟡 ตัวเลือกสำรอง (ต่ำกว่า Fair Value)';
+        } else {
+          badge.className = 'badge badge-danger';
+          badge.textContent = '🔴 ราคาเกิน Fair Value — พักเงินรอ';
+        }
+        recTd.appendChild(badge);
+        tr.appendChild(recTd);
+        tbody.appendChild(tr);
+      });
+    }
+
+    // MODULE D: Dividend Cashflow Ledger & XD Calendar
+    function renderXdCalendarAndLedger() {
+      const xdBody = document.getElementById('xdCalendarBody');
+      if (xdBody) {
+        while (xdBody.firstChild) xdBody.removeChild(xdBody.firstChild);
+        PORTFOLIO_STOCKS.forEach((st) => {
+          const shares = actualHoldings[st.code]?.shares || 0;
+          const estDiv = shares * st.totalDps;
+          const tr = document.createElement('tr');
+          tr.appendChild(createCell(st.name, true));
+          tr.appendChild(createCell(st.xdInterim + ' (~' + st.interimDps.toFixed(2) + ' บ.)', false));
+          tr.appendChild(createCell(st.xdFinal + ' (~' + st.finalDps.toFixed(2) + ' บ.)', false));
+          tr.appendChild(createCell('รวม ' + st.totalDps.toFixed(2) + ' บ./หุ้น', true));
+          tr.appendChild(createCell(shares > 0 ? (fmtNum(estDiv) + ' บ./ปี (จาก ' + fmtNum(shares) + ' หุ้น)') : 'ยังไม่มีหุ้นในพอร์ตจริง', shares > 0));
+          xdBody.appendChild(tr);
+        });
+      }
+
+      const ledgerBody = document.getElementById('dividendLedgerBody');
+      if (!ledgerBody) return;
+      while (ledgerBody.firstChild) ledgerBody.removeChild(ledgerBody.firstChild);
+
+      let totalCumNet = 0;
+      let totalInvested = 0;
+      PORTFOLIO_STOCKS.forEach((st) => {
+        const h = actualHoldings[st.code];
+        totalInvested += (h.shares * h.avgCost);
+      });
+
+      if (dividendLedger.length === 0) {
+        const trEmpty = document.createElement('tr');
+        const tdEmpty = document.createElement('td');
+        tdEmpty.colSpan = 8;
+        tdEmpty.style.textAlign = 'center';
+        tdEmpty.style.color = '#475569';
+        tdEmpty.textContent = 'ยังไม่มีรายการบันทึกเงินปันผลรับจริง — กดปุ่ม "➕ บันทึกรับเงินปันผลงวดนี้" ด้านบนเมื่อได้รับเงินปันผลเข้าบัญชีค่ะ';
+        trEmpty.appendChild(tdEmpty);
+        ledgerBody.appendChild(trEmpty);
+      } else {
+        dividendLedger.forEach((item, index) => {
+          const gross = item.shares * item.dps;
+          const tax10 = gross * 0.10;
+          const net = gross - tax10;
+          totalCumNet += net;
+
+          const tr = document.createElement('tr');
+          tr.appendChild(createCell(item.dateStr, false));
+          tr.appendChild(createCell(item.code, true));
+          tr.appendChild(createCell(item.period, false));
+          tr.appendChild(createCell(fmtNum(item.shares) + ' หุ้น × ' + Number(item.dps).toFixed(2) + ' บ.', false));
+          tr.appendChild(createCell(fmtNum(gross) + ' บ.', false));
+          tr.appendChild(createCell('-' + fmtNum(tax10) + ' บ.', false));
+          tr.appendChild(createCell('+' + fmtNum(net) + ' บ.', true));
+
+          const tdDel = document.createElement('td');
+          tdDel.className = 'no-print';
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'btn-pill secondary';
+          delBtn.style.cssText = 'min-height:34px;padding:0 12px;font-size:12px;';
+          delBtn.textContent = 'ลบ';
+          delBtn.addEventListener('click', () => {
+            dividendLedger.splice(index, 1);
+            saveActualHoldings(true, true);
+            renderXdCalendarAndLedger();
+          });
+          tdDel.appendChild(delBtn);
+          tr.appendChild(tdDel);
+          ledgerBody.appendChild(tr);
+        });
+      }
+
+      const paybackPct = totalInvested > 0 ? ((totalCumNet / totalInvested) * 100).toFixed(2) : '0.00';
+      const cumBadge = document.getElementById('cumDividendBadge');
+      if (cumBadge) {
+        cumBadge.textContent = '💰 ปันผลรับสะสมสุทธิ: ' + fmtNum(totalCumNet) + ' บาท (คืนทุนแล้ว ' + paybackPct + '% ของเงินต้นจริง)';
+      }
+    }
+
+    function autofillDividendForm() {
+      const code = document.getElementById('divRecStock')?.value || 'BDMS';
+      const period = document.getElementById('divRecPeriod')?.value || '';
+      const st = PORTFOLIO_STOCKS.find((s) => s.code === code);
+      const heldShares = actualHoldings[code]?.shares || 0;
+      if (heldShares > 0) {
+        document.getElementById('divRecShares').value = heldShares;
+      }
+      if (st) {
+        document.getElementById('divRecDps').value = period.includes('1H') ? st.interimDps.toFixed(2) : st.finalDps.toFixed(2);
+      }
+    }
+
+    function recalcDivFormGross() {}
+
+    function addDividendRecord() {
+      const code = document.getElementById('divRecStock')?.value || 'BDMS';
+      const period = document.getElementById('divRecPeriod')?.value || 'งวดประจำปี (2H Final)';
+      const shares = Math.max(1, Number(document.getElementById('divRecShares')?.value) || 0);
+      const dps = Math.max(0.01, Number(document.getElementById('divRecDps')?.value) || 0);
+      const todayStr = new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+
+      dividendLedger.unshift({
+        dateStr: todayStr,
+        code,
+        period,
+        shares,
+        dps
+      });
+      saveActualHoldings(true, true);
+      renderXdCalendarAndLedger();
+    }
+
     function setCapital(amount) {
       const input = document.getElementById('capitalInput');
       input.value = amount;
-      renderPortfolio();
-      renderActualPortfolio();
-      renderTaxCalculator();
+      renderAllModules();
     }
 
     function setMode(mode) {
@@ -819,20 +1397,7 @@
         currentBtn.className = 'btn-pill';
         badge.textContent = 'โหมดคำนวณ: ซื้อที่ราคาตลาดสด (Live Market Price)';
       }
-      renderPortfolio();
-      renderTaxCalculator();
-    }
-
-    function createCell(text, isStrong) {
-      const td = document.createElement('td');
-      if (isStrong) {
-        const strong = document.createElement('strong');
-        strong.textContent = text;
-        td.appendChild(strong);
-      } else {
-        td.textContent = text;
-      }
-      return td;
+      renderAllModules();
     }
 
     function renderActualPortfolio() {
@@ -864,7 +1429,6 @@
         const tr = document.createElement('tr');
         tr.appendChild(createCell(st.name, true));
 
-        // Shares Input
         const tdShares = document.createElement('td');
         const inpShares = document.createElement('input');
         inpShares.type = 'number';
@@ -875,14 +1439,12 @@
         inpShares.value = h.shares;
         inpShares.addEventListener('change', (ev) => {
           actualHoldings[st.code].shares = Math.max(0, Number(ev.target.value) || 0);
-          saveActualHoldings(true);
-          renderActualPortfolio();
-          renderTaxCalculator();
+          saveActualHoldings(true, true);
+          renderAllModules();
         });
         tdShares.appendChild(inpShares);
         tr.appendChild(tdShares);
 
-        // Avg Cost Input
         const tdCost = document.createElement('td');
         const inpCost = document.createElement('input');
         inpCost.type = 'number';
@@ -893,9 +1455,8 @@
         inpCost.value = h.avgCost;
         inpCost.addEventListener('change', (ev) => {
           actualHoldings[st.code].avgCost = Math.max(0, Number(ev.target.value) || 0);
-          saveActualHoldings(true);
-          renderActualPortfolio();
-          renderTaxCalculator();
+          saveActualHoldings(true, true);
+          renderAllModules();
         });
         tdCost.appendChild(inpCost);
         tr.appendChild(tdCost);
@@ -964,11 +1525,9 @@
       });
 
       const wht10 = totalGrossDiv * 0.10;
-      const taxCredit25 = creditEligibleDiv * (0.20 / 0.80); // 25% of dividend
+      const taxCredit25 = creditEligibleDiv * (0.20 / 0.80);
       const assessableIncome = totalGrossDiv + taxCredit25;
       const personalTaxLiability = assessableIncome * marginalRate;
-      // Net refund when filing ภ.ง.ด.90 vs letting 10% WHT be final:
-      // Refund = (WHT 10% + Tax Credit 25%) - Personal Tax Liability
       const netTaxRefund = (wht10 + taxCredit25) - personalTaxLiability;
       const bestNetCash = netTaxRefund > 0
         ? (totalGrossDiv - wht10 + netTaxRefund)
@@ -1048,7 +1607,6 @@
           day1BuyNow += t1Amt;
         }
 
-        // Row in Table 1
         const tr1 = document.createElement('tr');
         tr1.appendChild(createCell(st.name, true));
         tr1.appendChild(createCell(Math.round(st.weight * 100) + '%', false));
@@ -1060,7 +1618,6 @@
         tr1.appendChild(createCell(fmtNum(fairVal) + ' บ. (@' + st.fairValue.toFixed(2) + ')', false));
         allocBody.appendChild(tr1);
 
-        // Row in Table 2
         const tr2 = document.createElement('tr');
         tr2.appendChild(createCell(st.name, true));
         tr2.appendChild(createCell(fmtNum(budget) + ' บ.', true));
@@ -1099,7 +1656,6 @@
       document.getElementById('day1ActionBadge').textContent =
         'เข้าโซนเคาะซื้อทันที ' + buyPct + '% (' + fmtNum(day1BuyNow) + ' บ.) + พักเงินรอช้อน ' + (100 - buyPct) + '% (' + fmtNum(reserveCash) + ' บ.)';
 
-      // Snowball 10-year simulation
       const baseYieldRate = sumGrossDiv / totalCapital;
       let runningPort = totalCapital;
       const yearsToShow = [1, 2, 3, 5, 7, 10];
@@ -1124,20 +1680,25 @@
       }
     }
 
+    function renderAllModules() {
+      renderPortfolio();
+      renderActualPortfolio();
+      renderSmartOrderCalc();
+      renderReinvestAdvisor();
+      renderXdCalendarAndLedger();
+      renderTaxCalculator();
+    }
+
     window.PORTFOLIO_STOCKS = PORTFOLIO_STOCKS;
-    window.renderPortfolio = renderPortfolio;
+    window.renderPortfolio = renderAllModules;
     window.renderActualPortfolio = renderActualPortfolio;
     window.renderTaxCalculator = renderTaxCalculator;
 
     loadActualHoldings();
-    document.getElementById('capitalInput').addEventListener('input', () => {
-      renderPortfolio();
-      renderActualPortfolio();
-      renderTaxCalculator();
-    });
-    renderPortfolio();
-    renderActualPortfolio();
-    renderTaxCalculator();
+    document.getElementById('capitalInput').addEventListener('input', renderAllModules);
+    renderAllModules();
+    // Auto-pull latest cloud portfolio on startup
+    pullFromCloudKv(false);
   </script>
   <script src="../pwa-live.js" defer></script>
 </body>

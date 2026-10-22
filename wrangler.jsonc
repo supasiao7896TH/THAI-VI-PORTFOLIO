@@ -7,6 +7,12 @@
     "directory": "./",
     "binding": "ASSETS"
   },
+  "kv_namespaces": [
+    {
+      "binding": "VI_PORTFOLIO_KV",
+      "id": "d51a0de195b34f94b91c86480c68e831"
+    }
+  ],
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1,
